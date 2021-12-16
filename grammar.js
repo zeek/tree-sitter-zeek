@@ -20,8 +20,9 @@ module.exports = grammar({
         decl: $ => choice(
             seq('module', $.id, ';'),
             seq('export', '{', repeat($.decl), '}'),
-            // Slight change here over Zeek's parser: we make the combo of init
-            // class and initializer jointly optional:
+            // A change here over Zeek's parser: we make the combo of init class
+            // and initializer jointly optional, instead of individually. Helps
+            // avoid ambiguity.
             seq('global', $.id, optional(seq(':', $.type)), optional(seq($.init_class, $.init)), optional($.attr_list), ';'),
             seq('option', $.id, optional(seq(':', $.type)), optional(seq($.init_class, $.init)), optional($.attr_list), ';'),
             seq('const', $.id, optional(seq(':', $.type)), optional(seq($.init_class, $.init)), optional($.attr_list), ';'),
@@ -68,8 +69,11 @@ module.exports = grammar({
             $.id,
         ),
 
+        // This seems a good pattern for expressing sequences of one or more,
+        // with a given separator or set of separators. Could provide this as a
+        // new function to make more legible.
         enum_body: $ => repeat1(
-            seq(optional(seq($.enum_body_elem, ',')), $.enum_body_elem),
+            seq(repeat(seq($.enum_body_elem, ',')), $.enum_body_elem),
         ),
 
         enum_body_elem: $ => choice(
@@ -84,21 +88,14 @@ module.exports = grammar({
         ),
         
         func_params: $ => choice(
-            seq('(', $.formal_args, ')', ':', $.type),
-            seq('(', $.formal_args, ')'),
-        ),
-        
-        formal_args: $ => choice(
-            $.formal_args_decl_list,
-            seq($.formal_args_decl_list, ';'),
+            seq('(', $.formal_args, ')', optional(seq(':', $.type))),
         ),
 
-        formal_args_decl_list: $ => choice(
-            seq($.formal_args_decl_list, ';', $.formal_args_decl),
-            seq($.formal_args_decl_list, ',', $.formal_args_decl),
-            $.formal_args_decl),
-        
-        formal_args_decl: $ => seq($.id, ':', optional($.attr_list)),
+        formal_args: $ => repeat1(
+            seq(repeat(seq($.formal_arg, choice(';', ','))), $.formal_arg),
+        ),
+
+        formal_arg: $ => seq($.id, ':', $.type, optional($.attr_list)),
         
         type_decl: $ => seq($.id, ':', $.type, optional($.attr_list), ';'),
         
@@ -126,7 +123,7 @@ module.exports = grammar({
                 seq('&broker_store', '=', $.expr),
                 seq('&create_expire', '=', $.expr),
                 seq('&default', '=', $.expr),
-                seq('&deprecated', '=', 'const'),
+                seq('&deprecated', '=', $.string),
                 seq('&del_func', '=', $.expr),
                 seq('&expire_func', '=', $.expr),
                 seq('&on_change', '=', $.expr),
@@ -140,64 +137,88 @@ module.exports = grammar({
         // Compare to C precedence table at
         // https://en.cppreference.com/w/c/language/operator_precedence
         expr: $ => choice(
+            prec.l(7, seq($.expr, '[', $.expr_list, ']')),
+            prec.l(7, seq($.expr, '[', optional($.expr), ':', optional($.expr), ']')),
+            prec.l(7, seq($.expr, '$', $.id)),
+            
+            prec.r(6, seq('++', $.expr)),
+            prec.r(6, seq('--', $.expr)),
+            prec.r(6, seq('!', $.expr)),
+            prec.r(6, seq('~', $.expr)),
+            prec.r(6, seq('-', $.expr)),
+            prec.r(6, seq('+', $.expr)),
+            prec.l(6, seq($.expr, 'as', $.type)),
+            prec.l(6, seq($.expr, 'is', $.type)),
+            
+            prec.l(5, seq($.expr, '*', $.expr)),
+            prec.l(5, seq($.expr, '/', $.expr)),
+            prec.l(5, seq($.expr, '%', $.expr)),
+
+            prec.l(4, seq($.expr, '+', $.expr)),
+            prec.l(4, seq($.expr, '-', $.expr)),
+            
+            prec.l(4, seq($.expr, '<', $.expr)),
+            prec.l(4, seq($.expr, '<=', $.expr)),
+            prec.l(4, seq($.expr, '>', $.expr)),
+            prec.l(4, seq($.expr, '>=', $.expr)),
+
+            prec.l(4, seq($.expr, '==', $.expr)),
+            prec.l(4, seq($.expr, '!=', $.expr)),
+            
+            prec.l(4, seq($.expr, '&', $.expr)),
+            prec.l(4, seq($.expr, '^', $.expr)),
+            prec.l(4, seq($.expr, '|', $.expr)),
+            prec.l(4, seq($.expr, '&&', $.expr)),
+            prec.l(4, seq($.expr, '||', $.expr)),
+            prec.r(4, seq($.expr, '?', $.expr, ':', $.expr)),
+            prec.l(4, seq($.expr, 'in', $.expr)),
+            prec.l(4, seq($.expr, '!', 'in', $.expr)),
+            
+            prec.r(3, seq($.expr, '=', $.expr)),
+            prec.r(3, seq($.expr, '-=', $.expr)),
+            prec.r(3, seq($.expr, '+=', $.expr)),
+
+            prec(2, seq('$', $.id, '=', $.expr)),
+            prec(2, seq('$', $.id, $.begin_lambda, '=', $.lambda_body)),
+            
+            prec.l(1, seq('[', optional($.expr_list), ']')),
+            prec.l(1, seq('record', '(', $.expr_list, ')')),
+            prec.l(1, seq('table', '(', optional($.expr_list), ')', optional($.attr_list))),
+            prec.l(1, seq('set', '(', optional($.expr_list), ')', optional($.attr_list))),
+            prec.l(1, seq('vector', '(', optional($.expr_list), ')')),
+            prec.l(1, seq($.expr, '(', optional($.expr_list), ')')),
+            
+            $.id,
+            $.constant,
+            $.pattern,
+
+            seq('local', $.id, '=', $.expr),
             seq('(', $.expr, ')'),
             seq('copy', '(', $.expr, ')'),
-            
-            prec(5, seq($.expr, '[', $.expr_list, ']')),
-            prec(5, seq($.expr, '[', optional($.expr), ':', optional($.expr), ']')),
-            prec(5, seq($.expr, '$', $.id)),
-            
-            prec.r(4, seq('++', $.expr)),
-            prec.r(4, seq('--', $.expr)),
-            prec.r(4, seq('!', $.expr)),
-            prec.r(4, seq('~', $.expr)),
-            prec.r(4, seq('-', $.expr)),
-            prec.r(4, seq('+', $.expr)),
-            
-            prec.l(3, seq($.expr, '*', $.expr)),
-            prec.l(3, seq($.expr, '/', $.expr)),
-            prec.l(3, seq($.expr, '%', $.expr)),
+            seq('hook', $.expr),
+            seq('$.expr', '?$', $.id),
+            seq('schedule', $.expr, '{', $.event, '}'),
+            seq('|', $.expr, '|'),
 
-            prec.l(2, seq($.expr, '+', $.expr)),
-            prec.l(2, seq($.expr, '-', $.expr)),
-            
-            prec.l(2, seq($.expr, '<', $.expr)),
-            prec.l(2, seq($.expr, '<=', $.expr)),
-            prec.l(2, seq($.expr, '>', $.expr)),
-            prec.l(2, seq($.expr, '>=', $.expr)),
-
-            prec.l(2, seq($.expr, '==', $.expr)),
-            prec.l(2, seq($.expr, '!=', $.expr)),
-            
-            prec.l(2, seq($.expr, '&', $.expr)),
-            prec.l(2, seq($.expr, '^', $.expr)),
-            prec.l(2, seq($.expr, '|', $.expr)),
-            prec.l(2, seq($.expr, '&&', $.expr)),
-            prec.l(2, seq($.expr, '||', $.expr)),
-            prec.r(2, seq($.expr, '?', $.expr, ':', $.expr)),
-            prec.l(2, seq($.expr, 'in', $.expr)),
-            prec.l(2, seq($.expr, '!', 'in', $.expr)),
-            
-            prec.r(1, seq($.expr, '=', $.expr)), 
-            prec.r(1, seq($.expr, '-=', $.expr)), 
-            prec.r(1, seq($.expr, '+=', $.expr)),
-
-            prec(0, seq('$', $.id, '=', $.expr)),
-            prec(0, seq('$', $.id, $.begin_lambda, '=', $.lambda_body)),
-            
-            prec.l(0, seq('[', optional($.expr_list), ']')),
-            prec.l(0, seq('record', '(', $.expr_list, ')')),
-            prec.l(0, seq('table', '(', optional($.expr_list), ')', optional($.attr_list))),
-            prec.l(0, seq('set', '(', optional($.expr_list), ')', optional($.attr_list))),
-            prec.l(0, seq('vector', '(', optional($.expr_list), ')')),
-            // XXX prec.l(0, seq($.expr, '(', optional($.expr_list), ')')),
-            
-            prec(0, seq('local', $.id, '=', $.expr)),
-            // TODO
+            // TODO anonymous_function,
         ),
 
-        expr_list: $ => seq(optional(seq($.expr, ',')), $.expr),
-                 
+        expr_list: $ => seq(repeat(seq($.expr, ',')), $.expr),
+
+        constant: $ => choice(
+            prec.l(seq($.ipv4, optional(seq('/', /[0-9]+/)))),
+            prec.l(seq($.ipv6, optional(seq('/', /[0-9]+/)))),
+            $.hostname,
+            'T',
+            'F',
+            $.hex,
+            $.port,
+            $.interval,
+            $.string,
+            $.floatp,
+            $.integer,
+        ),
+        
         func_hdr: $ => choice(
             seq('function', $.id, $.func_params, optional($.attr_list)),
             seq('event', $.id, $.func_params, optional($.attr_list)),
@@ -207,12 +228,16 @@ module.exports = grammar({
 
         func_body: $ => seq('{', repeat($.stmt), '}'),
 
-        func_params: $ => seq('(', optional($.formal_args), ')', optional(seq(':', $.type))),
+        // Precedence here is to disambiguate other interpretations of the colon
+        // and type, arising in expressions.
+        func_params: $ => prec.l(
+            seq('(', optional($.formal_args), ')', optional(seq(':', $.type)))
+        ),
 
         begin_lambda: $ => seq(optional($.capture_list), $.func_params),
 
         capture_list: $ => repeat1(
-            seq(optional(seq($.capture, ',')), $.capture),
+            seq(repeat(seq($.capture, ',')), $.capture),
         ),
 
         capture: $ => seq(optional('copy'), $.id),
@@ -229,17 +254,52 @@ module.exports = grammar({
             '@endif',
             '@else',
         ),
+
+        event: $ => seq($.id, '(', optional($.expr_list), ')'),
         
         id: $ => /[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)*/,
-        file: $ => /[^ \t\r\n]+/,    
+        file: $ => /[^ \t\r\n]+/,
+        pattern: $ => /\/[^/\r\n]*\/i?/, // XXX this is likely too simplistic
+
+        // Yep ... StackOverflow: https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
+        ipv6: $ => /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/,
+        ipv4: $ => /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/,
+
+        port: $ => /[0-9]+\/(tcp|udp|icmp|unknown)/,
+        
+        integer: $ => /[0-9]+/,
+        floatp: $ => /[0-9]+\.[0-9]+/,
+        hex: $ => /0x[0-9a-fA-F]+/,
+
+        interval: $ => seq(
+            choice($.integer, $.floatp),
+            choice(
+                choice('day', 'days'),
+                choice('hr', 'hrs'),
+                choice('min', 'mins'),
+                choice('sec', 'secs'),
+                choice('msec', 'msecs'),
+                choice('usec', 'usecs'),
+            ),
+        ),
+
+        hostname_part: $ => /[A-Za-z0-9][A-Za-z0-9\-]*/,
+        hostname_tld: $ => /[A-Za-z][A-Za-z0-9\-]*/,
+        hostname: $ => seq(repeat1(seq($.hostname_part, '.')), $.hostname_tld),
+
+        escseq: $ => /\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+)/,
+        string: $ => seq(
+            '"',
+            repeat(choice(
+                /[^\r\n"]/,
+                $.escseq,
+            )),
+            '"',
+        ),
     },
     
     'extras': $ => [
         /[ \t\n/]+/,
         /#.*\n/,
-    ],
-    
-    'conflicts': $ => [
-        [$.source_file],
     ],
 });
