@@ -1,6 +1,6 @@
 // Aliases that make things easier to read
-prec.r = prec.right;
-prec.l = prec.left;
+prec_r = prec.right;
+prec_l = prec.left;
 
 module.exports = grammar({
     name: 'Zeek',
@@ -39,7 +39,7 @@ module.exports = grammar({
             seq('{', repeat($.stmt), '}'),
             seq('print', $.expr_list, ';'),
             seq('event', $.event, ';'),
-            prec.r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
+            prec_r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
             seq('switch', $.expr, '{', optional($.case_list), '}'),
             seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr),
             seq('for', '(', '[', repeat($.id), ']', optional(seq(',', $.id)), 'in', $.expr, ')'),
@@ -51,13 +51,13 @@ module.exports = grammar({
             // Precedence here works around ambiguity with similar global declaration:
             prec(-1, seq('const', $.id, optional($.type), optional($.initializer), optional($.attr_list), ';')),
             // Associativity here works around theoretical ambiguity if "when" nested:
-            prec.r(seq(
+            prec_r(seq(
                 optional('return'),
                 'when', '(', $.expr, ')', $.stmt,
                 optional(seq('timeout', $.expr, '{', repeat($.stmt), '}')),
             )),
             seq($.index_slice, '=', $.expr, ';'),
-            // $.expr, XXX
+            $.expr,
             ';',
             // Same ambiguity as above for 'const'
             prec(-1, $.conditional),
@@ -106,11 +106,10 @@ module.exports = grammar({
             $.id,
         ),
 
-        // This seems a good pattern for expressing sequences of one or more,
-        // with a given separator or set of separators. Could provide this as a
-        // new function to make more legible.
-        enum_body: $ => repeat1(
+        // Good idiom for a list of items with final optional separator:
+        enum_body: $ => choice(
             seq(repeat(seq($.enum_body_elem, ',')), $.enum_body_elem),
+            repeat1(seq($.enum_body_elem, ',')),
         ),
 
         enum_body_elem: $ => choice(
@@ -141,7 +140,7 @@ module.exports = grammar({
             $.init,
         ),
 
-        init_class: $ => choice('=', '+=', '-='),
+        init_class: $ => prec_r(choice('=', '+=', '-=')),
 
         init: $ => choice(
             seq('{', '}'),
@@ -149,8 +148,8 @@ module.exports = grammar({
             $.expr,
         ),
 
-        attr_list: $ => prec.l(repeat1(
-            choice(
+        attr_list: $ => prec_l(repeat1(
+            prec_l(choice(
                 '&broker_store_allow_complex_type',
                 '&deprecated',
                 '&error_handler',
@@ -173,83 +172,84 @@ module.exports = grammar({
                 seq('&read_expire', '=', $.expr),
                 seq('&type_column', '=', $.expr),
                 seq('&write_expire', '=', $.expr),
-            ),
+            )),
         )),
 
         // Compare to C precedence table at
         // https://en.cppreference.com/w/c/language/operator_precedence
         expr: $ => choice(
-            prec.l(7, seq($.expr, '[', $.expr_list, ']')),
-            prec.l(7, seq($.expr, $.index_slice)),
-            prec.l(7, seq($.expr, '$', $.id)),
+            prec_l(7, seq($.expr, '[', $.expr_list, ']')),
+            prec_l(7, seq($.expr, $.index_slice)),
+            prec_l(7, seq($.expr, '$', $.id)),
 
-            prec.r(6, seq('++', $.expr)),
-            prec.r(6, seq('--', $.expr)),
-            prec.r(6, seq('!', $.expr)),
-            prec.r(6, seq('~', $.expr)),
-            prec.r(6, seq('-', $.expr)),
-            prec.r(6, seq('+', $.expr)),
-            prec.l(6, seq($.expr, 'as', $.type)),
-            prec.l(6, seq($.expr, 'is', $.type)),
+            prec_r(6, seq('++', $.expr)),
+            prec_r(6, seq('--', $.expr)),
+            prec_r(6, seq('!', $.expr)),
+            prec_r(6, seq('~', $.expr)),
+            prec_r(6, seq('-', $.expr)),
+            prec_r(6, seq('+', $.expr)),
+            prec_l(6, seq($.expr, 'as', $.type)),
+            prec_l(6, seq($.expr, 'is', $.type)),
 
-            prec.l(5, seq($.expr, '*', $.expr)),
-            prec.l(5, seq($.expr, '/', $.expr)),
-            prec.l(5, seq($.expr, '%', $.expr)),
+            prec_l(5, seq($.expr, '*', $.expr)),
+            prec_l(5, seq($.expr, '/', $.expr)),
+            prec_l(5, seq($.expr, '%', $.expr)),
 
-            prec.l(4, seq($.expr, '+', $.expr)),
-            prec.l(4, seq($.expr, '-', $.expr)),
+            prec_l(4, seq($.expr, '+', $.expr)),
+            prec_l(4, seq($.expr, '-', $.expr)),
 
-            prec.l(4, seq($.expr, '<', $.expr)),
-            prec.l(4, seq($.expr, '<=', $.expr)),
-            prec.l(4, seq($.expr, '>', $.expr)),
-            prec.l(4, seq($.expr, '>=', $.expr)),
+            prec_l(4, seq($.expr, '<', $.expr)),
+            prec_l(4, seq($.expr, '<=', $.expr)),
+            prec_l(4, seq($.expr, '>', $.expr)),
+            prec_l(4, seq($.expr, '>=', $.expr)),
 
-            prec.l(4, seq($.expr, '==', $.expr)),
-            prec.l(4, seq($.expr, '!=', $.expr)),
+            prec_l(4, seq($.expr, '==', $.expr)),
+            prec_l(4, seq($.expr, '!=', $.expr)),
 
-            prec.l(4, seq($.expr, '&', $.expr)),
-            prec.l(4, seq($.expr, '^', $.expr)),
-            prec.l(4, seq($.expr, '|', $.expr)),
-            prec.l(4, seq($.expr, '&&', $.expr)),
-            prec.l(4, seq($.expr, '||', $.expr)),
-            prec.r(4, seq($.expr, '?', $.expr, ':', $.expr)),
-            prec.l(4, seq($.expr, 'in', $.expr)),
-            prec.l(4, seq($.expr, '!', 'in', $.expr)),
+            prec_l(4, seq($.expr, '&', $.expr)),
+            prec_l(4, seq($.expr, '^', $.expr)),
+            prec_l(4, seq($.expr, '|', $.expr)),
+            prec_l(4, seq($.expr, '&&', $.expr)),
+            prec_l(4, seq($.expr, '||', $.expr)),
+            prec_r(4, seq($.expr, '?', $.expr, ':', $.expr)),
+            prec_l(4, seq($.expr, 'in', $.expr)),
+            prec_l(4, seq($.expr, '!', 'in', $.expr)),
 
-            prec.r(3, seq($.expr, '=', $.expr)),
-            prec.r(3, seq($.expr, '-=', $.expr)),
-            prec.r(3, seq($.expr, '+=', $.expr)),
+            prec_r(3, seq($.expr, '=', $.expr)),
+            prec_r(3, seq($.expr, '-=', $.expr)),
+            prec_r(3, seq($.expr, '+=', $.expr)),
 
             prec(2, seq('$', $.id, '=', $.expr)),
             prec(2, seq('$', $.id, $.begin_lambda, '=', $.lambda_body)),
 
-            prec.l(1, seq('[', optional($.expr_list), ']')),
-            prec.l(1, seq('record', '(', $.expr_list, ')')),
-            prec.l(1, seq('table', '(', optional($.expr_list), ')', optional($.attr_list))),
-            prec.l(1, seq('set', '(', optional($.expr_list), ')', optional($.attr_list))),
-            prec.l(1, seq('vector', '(', optional($.expr_list), ')')),
-            prec.l(1, seq($.expr, '(', optional($.expr_list), ')')),
+            prec_l(1, seq('[', optional($.expr_list), ']')),
+            prec_l(1, seq('record', '(', $.expr_list, ')')),
+            prec_l(1, seq('table', '(', optional($.expr_list), ')', optional($.attr_list))),
+            prec_l(1, seq('set', '(', optional($.expr_list), ')', optional($.attr_list))),
+            prec_l(1, seq('vector', '(', optional($.expr_list), ')')),
+            prec_l(1, seq($.expr, '(', optional($.expr_list), ')')),
 
             $.id,
             $.constant,
             $.pattern,
 
-            seq('local', $.id, '=', $.expr),
+            prec_r(seq('local', $.id, '=', $.expr)),
             seq('(', $.expr, ')'),
             seq('copy', '(', $.expr, ')'),
-            seq('hook', $.expr),
-            // seq($.expr, '?$', $.id), XXX
+            prec_r(seq('hook', $.expr)),
+            seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event, '}'),
             seq('|', $.expr, '|'),
-
-            // TODO anonymous_function,
+            // Anonymous functions:
+            seq('function', $.begin_lambda, $.lambda_body),
         ),
 
         expr_list: $ => seq(repeat(seq($.expr, ',')), $.expr),
 
         constant: $ => choice(
-            prec.l(seq($.ipv4, optional(seq('/', /[0-9]+/)))),
-            prec.l(seq($.ipv6, optional(seq('/', /[0-9]+/)))),
+            // Associativity here resolves ambiguity with division
+            prec_l(seq($.ipv4, optional(seq('/', /[0-9]+/)))),
+            prec_l(seq($.ipv6, optional(seq('/', /[0-9]+/)))),
             $.hostname,
             'T',
             'F',
@@ -262,9 +262,10 @@ module.exports = grammar({
         ),
 
         func_hdr: $ => choice(
-            seq('function', $.id, $.func_params, optional($.attr_list)),
+            // Precedences here are to avoid ambiguity with related expressions
+            prec(1, seq('function', $.id, $.func_params, optional($.attr_list))),
             seq('event', $.id, $.func_params, optional($.attr_list)),
-            seq('hook', $.id, $.func_params, optional($.attr_list)),
+            prec(1, seq('hook', $.id, $.func_params, optional($.attr_list))),
             seq('redef', 'event', $.id, $.func_params, optional($.attr_list)),
         ),
 
@@ -272,7 +273,7 @@ module.exports = grammar({
 
         // Precedence here is to disambiguate other interpretations of the colon
         // and type, arising in expressions.
-        func_params: $ => prec.l(
+        func_params: $ => prec_l(
             seq('(', optional($.formal_args), ')', optional(seq(':', $.type)))
         ),
 
@@ -280,6 +281,7 @@ module.exports = grammar({
 
         begin_lambda: $ => seq(optional($.capture_list), $.func_params),
 
+        // Good idiom for list of items without final separator:
         capture_list: $ => repeat1(
             seq(repeat(seq($.capture, ',')), $.capture),
         ),
@@ -325,7 +327,7 @@ module.exports = grammar({
         hostname: $ => seq(repeat1(seq($.hostname_part, '.')), $.hostname_tld),
 
         // Plain string characters or escape sequences, wrapped in double-quotes.
-        string: $ => /"([^\r\n"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
+        string: $ => /"([^\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
     },
 
     'extras': $ => [
