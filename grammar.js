@@ -2,6 +2,18 @@
 prec_r = prec.right;
 prec_l = prec.left;
 
+// Helper for a list of items with at least one member, with configurable
+// separator token and optional support for a final, dangling separator.
+function list1(item, sep, allow_final_sep=false) {
+    if ( allow_final_sep ) {
+        return choice(
+            seq(repeat(seq(item, sep)), item),
+            repeat1(seq(item, sep)));
+    } else {
+        return repeat1(seq(repeat(seq(item, sep)), item));
+    }
+}
+
 module.exports = grammar({
     name: 'Zeek',
 
@@ -10,12 +22,6 @@ module.exports = grammar({
             repeat($.decl),
             repeat($.stmt),
         ),
-
-        preproc: $ => choice(
-            $.atload,
-        ),
-
-        atload: $ => seq('@load', $.file),
 
         decl: $ => choice(
             seq('module', $.id, ';'),
@@ -30,8 +36,8 @@ module.exports = grammar({
             seq('redef', 'enum', $.id, '+=', '{', $.enum_body, '}', ';'),
             seq('redef', 'record', $.id, '+=', '{', repeat($.type_decl), '}', optional($.attr_list), ';'),
             seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
-            seq($.func_hdr, repeat($.conditional), $.func_body),
-            seq($.conditional),
+            seq($.func_hdr, repeat($.preproc), $.func_body),
+            seq($.preproc),
         ),
 
         stmt: $ => choice(
@@ -41,15 +47,15 @@ module.exports = grammar({
             seq('event', $.event, ';'),
             prec_r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
             seq('switch', $.expr, '{', optional($.case_list), '}'),
-            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr),
-            seq('for', '(', '[', repeat($.id), ']', optional(seq(',', $.id)), 'in', $.expr, ')'),
+            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')'),
+            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')'),
             seq('while', '(', $.expr, ')', $.stmt),
             seq(choice('next', 'break', 'fallthrough'), ';'),
             seq('return', optional($.expr), ';'),
             seq(choice('add', 'delete'), $.expr, ';'),
-            seq('local', $.id, optional($.type), optional($.initializer), optional($.attr_list), ';'),
+            seq('local', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
             // Precedence here works around ambiguity with similar global declaration:
-            prec(-1, seq('const', $.id, optional($.type), optional($.initializer), optional($.attr_list), ';')),
+            prec(-1, seq('const', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';')),
             // Associativity here works around theoretical ambiguity if "when" nested:
             prec_r(seq(
                 optional('return'),
@@ -60,7 +66,7 @@ module.exports = grammar({
             $.expr,
             ';',
             // Same ambiguity as above for 'const'
-            prec(-1, $.conditional),
+            prec(-1, $.preproc),
         ),
 
         case_list: $ => repeat1(
@@ -87,12 +93,12 @@ module.exports = grammar({
             'subnet',
             'pattern',
             'port',
-            seq('table', '[', repeat1($.type), ']', 'of', $.type),
-            seq('set', '[', repeat1($.type), ']'),
+            seq('table', '[', list1($.type, ','), ']', 'of', $.type),
+            seq('set', '[', list1($.type, ','), ']'),
             'time',
             'timer',
             seq('record', '{', repeat($.type_decl), '}'),
-            seq('union', '{', repeat($.type), '}'),
+            seq('union', '{', list1($.type, ','), '}'),
             seq('enum', '{', $.enum_body, '}'),
             'list',
             seq('list', 'of', $.type),
@@ -106,15 +112,10 @@ module.exports = grammar({
             $.id,
         ),
 
-        // Good idiom for a list of items with final optional separator:
-        enum_body: $ => choice(
-            seq(repeat(seq($.enum_body_elem, ',')), $.enum_body_elem),
-            repeat1(seq($.enum_body_elem, ',')),
-        ),
+        enum_body: $ => list1($.enum_body_elem, ',', true),
 
         enum_body_elem: $ => choice(
-            seq($.id, '=', 'const', optional($.deprecated)),
-            seq($.id, '=', '-', 'const'),
+            seq($.id, '=', $.constant, optional($.deprecated)),
             seq($.id, optional($.deprecated)),
         ),
 
@@ -127,16 +128,13 @@ module.exports = grammar({
             seq('(', $.formal_args, ')', optional(seq(':', $.type))),
         ),
 
-        formal_args: $ => repeat1(
-            seq(repeat(seq($.formal_arg, choice(';', ','))), $.formal_arg),
-        ),
-
+        formal_args: $ => list1($.formal_arg, choice(';', ','), false),
         formal_arg: $ => seq($.id, ':', $.type, optional($.attr_list)),
 
         type_decl: $ => seq($.id, ':', $.type, optional($.attr_list), ';'),
 
         initializer: $ => seq(
-            $.init_class,
+            optional($.init_class),
             $.init,
         ),
 
@@ -182,6 +180,7 @@ module.exports = grammar({
             prec_l(7, seq($.expr, $.index_slice)),
             prec_l(7, seq($.expr, '$', $.id)),
 
+            prec_r(6, seq('|', $.expr, '|')),
             prec_r(6, seq('++', $.expr)),
             prec_r(6, seq('--', $.expr)),
             prec_r(6, seq('!', $.expr)),
@@ -239,7 +238,6 @@ module.exports = grammar({
             prec_r(seq('hook', $.expr)),
             seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event, '}'),
-            seq('|', $.expr, '|'),
             // Anonymous functions:
             seq('function', $.begin_lambda, $.lambda_body),
         ),
@@ -264,8 +262,8 @@ module.exports = grammar({
         func_hdr: $ => choice(
             // Precedences here are to avoid ambiguity with related expressions
             prec(1, seq('function', $.id, $.func_params, optional($.attr_list))),
-            seq('event', $.id, $.func_params, optional($.attr_list)),
             prec(1, seq('hook', $.id, $.func_params, optional($.attr_list))),
+            seq('event', $.id, $.func_params, optional($.attr_list)),
             seq('redef', 'event', $.id, $.func_params, optional($.attr_list)),
         ),
 
@@ -281,19 +279,17 @@ module.exports = grammar({
 
         begin_lambda: $ => seq(optional($.capture_list), $.func_params),
 
-        // Good idiom for list of items without final separator:
-        capture_list: $ => repeat1(
-            seq(repeat(seq($.capture, ',')), $.capture),
-        ),
+        capture_list: $ => list1($.capture, ',', false),
 
         capture: $ => seq(optional('copy'), $.id),
 
         lambda_body: $ => seq('{', repeat($.stmt), '}'),
 
-        // The "preprocessor" options. We include @load here, which is handled
-        // separately in Zeek's parser.
-        conditional: $ => choice(
+        // The "preprocessor" options. We include more than conditionals here.
+        preproc: $ => choice(
             seq('@load', $.file),
+            seq('@load-sigs', $.file),
+            seq('@prefixes', choice('=', '+='), $.id),
             seq('@if', '(', $.expr, ')'),
             seq('@ifdef', '(', $.id, ')'),
             seq('@ifndef', '(', $.id, ')'),
@@ -305,7 +301,7 @@ module.exports = grammar({
 
         id: $ => /[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)*/,
         file: $ => /[^ \t\r\n]+/,
-        pattern: $ => /\/[^/\r\n]*\/i?/, // XXX this is likely too simplistic
+        pattern: $ => /\/((\\\/)?[^\r\n\/]?)*\/i?/,
 
         // Sigh ... https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
         ipv6: $ => /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/,
