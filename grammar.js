@@ -238,11 +238,10 @@ module.exports = grammar({
             prec_r(seq('hook', $.expr)),
             seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event, '}'),
-            // Anonymous functions:
             seq('function', $.begin_lambda, $.lambda_body),
         ),
 
-        expr_list: $ => seq(repeat(seq($.expr, ',')), $.expr),
+        expr_list: $ => list1($.expr, ','),
 
         constant: $ => choice(
             // Associativity here resolves ambiguity with division
@@ -287,6 +286,7 @@ module.exports = grammar({
 
         // The "preprocessor" options. We include more than conditionals here.
         preproc: $ => choice(
+            seq('@deprecated', optional('('), $.string, optional(')')),
             seq('@load', $.file),
             seq('@load-sigs', $.file),
             seq('@prefixes', choice('=', '+='), $.id),
@@ -310,7 +310,7 @@ module.exports = grammar({
         port: $ => /[0-9]+\/(tcp|udp|icmp|unknown)/,
 
         integer: $ => /[0-9]+/,
-        floatp: $ => /[0-9]+\.[0-9]+/,
+        floatp: $ => /(([0-9]*\.?[0-9])|([0-9]\.?[0-9]*))([eE][-+]?[0-9])?/,
         hex: $ => /0x[0-9a-fA-F]+/,
 
         // Intervals can be expressed without whitespace, e.g. "24hrs", so we
@@ -318,12 +318,12 @@ module.exports = grammar({
         // thing as a regex.
         interval: $ => /[0-9]+(\.[0-9]+)?[ \t]*(day|hr|min|sec|msec|usec)s?/,
 
-        hostname_part: $ => /[A-Za-z0-9][A-Za-z0-9\-]*/,
-        hostname_tld: $ => /[A-Za-z][A-Za-z0-9\-]*/,
-        hostname: $ => seq(repeat1(seq($.hostname_part, '.')), $.hostname_tld),
+        // We require hostnames to have a dot. This is a departure from Zeek,
+        // but one that avoids several annoying confusions with other constants.
+        hostname: $ => /([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z][A-Za-z0-9\-]*/,
 
         // Plain string characters or escape sequences, wrapped in double-quotes.
-        string: $ => /"([^\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
+        string: $ => /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
     },
 
     'extras': $ => [
