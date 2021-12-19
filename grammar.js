@@ -15,7 +15,7 @@ function list1(item, sep, allow_final_sep=false) {
 }
 
 module.exports = grammar({
-    name: 'Zeek',
+    name: 'zeek',
 
     rules: {
         source_file: $ => seq(
@@ -327,7 +327,7 @@ module.exports = grammar({
     },
 
     'extras': $ => [
-        /[ \t\n/]+/,
+        /[ \t\n]+/,
         /#.*\n/,
     ],
 });
