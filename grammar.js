@@ -44,7 +44,7 @@ module.exports = grammar({
             // TODO: @no-test support
             seq('{', repeat($.stmt), '}'),
             seq('print', $.expr_list, ';'),
-            seq('event', $.event, ';'),
+            seq('event', $.event_hdr, ';'),
             prec_r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
             seq('switch', $.expr, '{', optional($.case_list), '}'),
             seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')'),
@@ -146,31 +146,31 @@ module.exports = grammar({
             $.expr,
         ),
 
-        attr_list: $ => prec_l(repeat1(
-            prec_l(choice(
-                '&broker_store_allow_complex_type',
-                '&deprecated',
-                '&error_handler',
-                '&is_assigned',
-                '&is_used',
-                '&log',
-                '&optional',
-                '&raw_output',
-                '&redef',
-                seq('&add_func', '=', $.expr),
-                seq('&backend', '=', $.expr),
-                seq('&broker_store', '=', $.expr),
-                seq('&create_expire', '=', $.expr),
-                seq('&default', '=', $.expr),
-                seq('&deprecated', '=', $.string),
-                seq('&del_func', '=', $.expr),
-                seq('&expire_func', '=', $.expr),
-                seq('&on_change', '=', $.expr),
-                seq('&priority', '=', $.expr),
-                seq('&read_expire', '=', $.expr),
-                seq('&type_column', '=', $.expr),
-                seq('&write_expire', '=', $.expr),
-            )),
+        attr_list: $ => prec_l(repeat1($.attr)),
+
+        attr: $ => prec_l(choice(
+            '&broker_store_allow_complex_type',
+            '&deprecated',
+            '&error_handler',
+            '&is_assigned',
+            '&is_used',
+            '&log',
+            '&optional',
+            '&raw_output',
+            '&redef',
+            seq('&add_func', '=', $.expr),
+            seq('&backend', '=', $.expr),
+            seq('&broker_store', '=', $.expr),
+            seq('&create_expire', '=', $.expr),
+            seq('&default', '=', $.expr),
+            seq('&deprecated', '=', $.string),
+            seq('&del_func', '=', $.expr),
+            seq('&expire_func', '=', $.expr),
+            seq('&on_change', '=', $.expr),
+            seq('&priority', '=', $.expr),
+            seq('&read_expire', '=', $.expr),
+            seq('&type_column', '=', $.expr),
+            seq('&write_expire', '=', $.expr),
         )),
 
         // Compare to C precedence table at
@@ -237,7 +237,7 @@ module.exports = grammar({
             seq('copy', '(', $.expr, ')'),
             prec_r(seq('hook', $.expr)),
             seq($.expr, '?$', $.id),
-            seq('schedule', $.expr, '{', $.event, '}'),
+            seq('schedule', $.expr, '{', $.event_hdr, '}'),
             seq('function', $.begin_lambda, $.lambda_body),
         ),
 
@@ -258,13 +258,12 @@ module.exports = grammar({
             $.integer,
         ),
 
-        func_hdr: $ => choice(
-            // Precedences here are to avoid ambiguity with related expressions
-            prec(1, seq('function', $.id, $.func_params, optional($.attr_list))),
-            prec(1, seq('hook', $.id, $.func_params, optional($.attr_list))),
-            seq('event', $.id, $.func_params, optional($.attr_list)),
-            seq('redef', 'event', $.id, $.func_params, optional($.attr_list)),
-        ),
+        func_hdr: $ => choice($.func, $.hook, $.event),
+
+        // Precedences here are to avoid ambiguity with related expressions
+        func: $ => prec(1, seq('function', $.id, $.func_params, optional($.attr_list))),
+        hook: $ => prec(1, seq('hook', $.id, $.func_params, optional($.attr_list))),
+        event: $ => seq(optional('redef'), 'event', $.id, $.func_params, optional($.attr_list)),
 
         func_body: $ => seq('{', repeat($.stmt), '}'),
 
@@ -297,7 +296,7 @@ module.exports = grammar({
             '@else',
         ),
 
-        event: $ => seq($.id, '(', optional($.expr_list), ')'),
+        event_hdr: $ => seq($.id, '(', optional($.expr_list), ')'),
 
         id: $ => /[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)*/,
         file: $ => /[^ \t\r\n]+/,
@@ -324,10 +323,14 @@ module.exports = grammar({
 
         // Plain string characters or escape sequences, wrapped in double-quotes.
         string: $ => /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
+        
+        minor_comment: $ => /#[^#].*\n/,
+        zeekygen_comment: $ => /##.*\n/,
     },
 
     'extras': $ => [
         /[ \t\n]+/,
-        /#.*\n/,
+        $.minor_comment,
+        $.zeekygen_comment,
     ],
 });

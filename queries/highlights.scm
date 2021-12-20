@@ -1,3 +1,22 @@
+;; Language features
+;; -----------------
+
+(event (id) @function)
+(hook (id) @function)
+(func (id) @function)
+(type) @type
+(attr) @attribute
+
+;; Literals
+;; --------
+
+(minor_comment) @comment
+(zeekygen_comment) @property
+(string) @string
+(constant) @constant
+
+;; Tokens
+;; ------
 [
  ":"
  ";"
