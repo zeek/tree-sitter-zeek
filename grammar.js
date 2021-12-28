@@ -24,21 +24,34 @@ module.exports = grammar({
         ),
 
         decl: $ => choice(
-            seq('module', $.id, ';'),
-            seq('export', '{', repeat($.decl), '}'),
-            // A change here over Zeek's parser: we make the combo of init class
-            // and initializer jointly optional, instead of individually. Helps
-            // avoid ambiguity.
-            seq('global', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
-            seq('option', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
-            seq('const', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
-            seq('redef', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
-            seq('redef', 'enum', $.id, '+=', '{', $.enum_body, '}', ';'),
-            seq('redef', 'record', $.id, '+=', '{', repeat($.type_decl), '}', optional($.attr_list), ';'),
-            seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
-            seq($.func_hdr, repeat($.preproc), $.func_body),
-            seq($.preproc),
+            $.module_decl,
+            $.export_decl,
+            $.global_decl,
+            $.option_decl,
+            $.const_decl,
+            $.redef_decl,
+            $.redef_enum_decl,
+            $.redef_record_decl,
+            $.type_decl,
+            $.func_hdr_decl,
+            $.preproc,
         ),
+
+        module_decl: $ => seq('module', $.id, ';'),
+        export_decl: $ => seq('export', '{', repeat($.decl), '}'),
+
+        // A change here over Zeek's parser: we make the combo of init class
+        // and initializer jointly optional, instead of individually. Helps
+        // avoid ambiguity.
+        global_decl: $ => seq('global', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
+        option_decl: $ => seq('option', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
+        const_decl: $ => seq('const', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
+        redef_decl: $ => seq('redef', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
+
+        redef_enum_decl: $ => seq('redef', 'enum', $.id, '+=', '{', $.enum_body, '}', ';'),
+        redef_record_decl: $ => seq('redef', 'record', $.id, '+=', '{', repeat($.type_spec), '}', optional($.attr_list), ';'),
+        type_decl: $ => seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
+        func_hdr_decl: $ => seq($.func_hdr, repeat($.preproc), $.func_body),
 
         stmt: $ => choice(
             // TODO: @no-test support
@@ -97,7 +110,7 @@ module.exports = grammar({
             seq('set', '[', list1($.type, ','), ']'),
             'time',
             'timer',
-            seq('record', '{', repeat($.type_decl), '}'),
+            seq('record', '{', repeat($.type_spec), '}'),
             seq('union', '{', list1($.type, ','), '}'),
             seq('enum', '{', $.enum_body, '}'),
             'list',
@@ -131,7 +144,7 @@ module.exports = grammar({
         formal_args: $ => list1($.formal_arg, choice(';', ','), false),
         formal_arg: $ => seq($.id, ':', $.type, optional($.attr_list)),
 
-        type_decl: $ => seq($.id, ':', $.type, optional($.attr_list), ';'),
+        type_spec: $ => seq($.id, ':', $.type, optional($.attr_list), ';'),
 
         initializer: $ => seq(
             optional($.init_class),
