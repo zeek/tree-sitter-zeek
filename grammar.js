@@ -338,12 +338,20 @@ module.exports = grammar({
         string: $ => /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
         
         minor_comment: $ => /#[^#].*\n/,
-        zeekygen_comment: $ => /##.*\n/,
+
+        // Zeekygen comments come in three flavors: a head one at the beginning
+        // of a script (##!), one that refers to the previous node (##<), and
+        // ones that refer to the subsequent one.
+        zeekygen_head_comment: $ => /##!.*\n/,
+        zeekygen_prev_comment: $ => /##<.*\n/,
+        zeekygen_next_comment: $ => /##(\n|[^!<\n].*\n)/,
     },
 
     'extras': $ => [
         /[ \t\n]+/,
         $.minor_comment,
-        $.zeekygen_comment,
+        $.zeekygen_head_comment,
+        $.zeekygen_prev_comment,
+        $.zeekygen_next_comment,
     ],
 });

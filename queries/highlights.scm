@@ -11,7 +11,9 @@
 ;; --------
 
 (minor_comment) @comment
-(zeekygen_comment) @property
+(zeekygen_head_comment) @property
+(zeekygen_prev_comment) @property
+(zeekygen_next_comment) @property
 (string) @string
 (constant) @constant
 
