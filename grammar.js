@@ -33,7 +33,7 @@ module.exports = grammar({
             $.redef_enum_decl,
             $.redef_record_decl,
             $.type_decl,
-            $.func_hdr_decl,
+            $.func_decl,
             $.preproc,
         ),
 
@@ -51,7 +51,7 @@ module.exports = grammar({
         redef_enum_decl: $ => seq('redef', 'enum', $.id, '+=', '{', $.enum_body, '}', ';'),
         redef_record_decl: $ => seq('redef', 'record', $.id, '+=', '{', repeat($.type_spec), '}', optional($.attr_list), ';'),
         type_decl: $ => seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
-        func_hdr_decl: $ => seq($.func_hdr, repeat($.preproc), $.func_body),
+        func_decl: $ => seq($.func_hdr, repeat($.preproc), $.func_body),
 
         stmt: $ => choice(
             // TODO: @no-test support
@@ -60,8 +60,8 @@ module.exports = grammar({
             seq('event', $.event_hdr, ';'),
             prec_r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
             seq('switch', $.expr, '{', optional($.case_list), '}'),
-            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')'),
-            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')'),
+            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')', $.stmt),
+            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')', $.stmt),
             seq('while', '(', $.expr, ')', $.stmt),
             seq(choice('next', 'break', 'fallthrough'), ';'),
             seq('return', optional($.expr), ';'),
@@ -77,9 +77,9 @@ module.exports = grammar({
             )),
             seq($.index_slice, '=', $.expr, ';'),
             $.expr,
-            ';',
             // Same ambiguity as above for 'const'
             prec(-1, $.preproc),
+            ';',
         ),
 
         case_list: $ => repeat1(
