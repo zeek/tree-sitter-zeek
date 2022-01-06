@@ -76,7 +76,7 @@ module.exports = grammar({
                 optional(seq('timeout', $.expr, '{', repeat($.stmt), '}')),
             )),
             seq($.index_slice, '=', $.expr, ';'),
-            $.expr,
+            seq($.expr, ';'),
             // Same ambiguity as above for 'const'
             prec(-1, $.preproc),
             ';',
@@ -90,9 +90,8 @@ module.exports = grammar({
             ),
         ),
 
-        case_type_list: $ => repeat1(
-            seq('type', $.type, optional(seq('as', $.id))),
-        ),
+        case_type_list: $ => list1(
+            seq('type', $.type, optional(seq('as', $.id))), ','),
 
         type: $ => choice(
             'addr',
