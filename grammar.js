@@ -233,7 +233,7 @@ module.exports = grammar({
             prec_r(3, seq($.expr, '+=', $.expr)),
 
             prec(2, seq('$', $.id, '=', $.expr)),
-            prec(2, seq('$', $.id, $.begin_lambda, '=', $.lambda_body)),
+            prec(2, seq('$', $.id, $.begin_lambda, '=', $.func_body)),
 
             prec_l(1, seq('[', optional($.expr_list), ']')),
             prec_l(1, seq('record', '(', $.expr_list, ')')),
@@ -251,7 +251,7 @@ module.exports = grammar({
             prec_r(seq('hook', $.expr)),
             seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event_hdr, '}'),
-            seq('function', $.begin_lambda, $.lambda_body),
+            seq('function', $.begin_lambda, $.func_body),
 
             // Lower precedence here to favor local-variable statements
             prec_r(-1, seq('local', $.id, '=', $.expr)),
@@ -293,11 +293,9 @@ module.exports = grammar({
 
         begin_lambda: $ => seq(optional($.capture_list), $.func_params),
 
-        capture_list: $ => list1($.capture, ',', false),
+        capture_list: $ => seq('[', list1($.capture, ',', false), ']'),
 
         capture: $ => seq(optional('copy'), $.id),
-
-        lambda_body: $ => seq('{', optional($.stmt_list), '}'),
 
         // The "preprocessor" options. We include more than conditionals here.
         preproc: $ => choice(
