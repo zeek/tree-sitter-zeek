@@ -55,7 +55,7 @@ module.exports = grammar({
 
         stmt: $ => choice(
             // TODO: @no-test support
-            seq('{', repeat($.stmt), '}'),
+            seq('{', optional($.stmt_list), '}'),
             seq('print', $.expr_list, ';'),
             seq('event', $.event_hdr, ';'),
             prec_r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
@@ -73,7 +73,7 @@ module.exports = grammar({
             prec_r(seq(
                 optional('return'),
                 'when', '(', $.expr, ')', $.stmt,
-                optional(seq('timeout', $.expr, '{', repeat($.stmt), '}')),
+                optional(seq('timeout', $.expr, '{', optional($.stmt_list), '}')),
             )),
             seq($.index_slice, '=', $.expr, ';'),
             seq($.expr, ';'),
@@ -82,11 +82,13 @@ module.exports = grammar({
             ';',
         ),
 
+        stmt_list: $ => repeat1($.stmt),
+
         case_list: $ => repeat1(
             choice(
-                seq('case', $.expr_list, ':', repeat($.stmt)),
-                seq('case', $.case_type_list, ':', repeat($.stmt)),
-                seq('default', ':', repeat($.stmt)),
+                seq('case', $.expr_list, ':', optional($.stmt_list)),
+                seq('case', $.case_type_list, ':', optional($.stmt_list)),
+                seq('default', ':', optional($.stmt_list)),
             ),
         ),
 
@@ -244,13 +246,15 @@ module.exports = grammar({
             $.constant,
             $.pattern,
 
-            prec_r(seq('local', $.id, '=', $.expr)),
             seq('(', $.expr, ')'),
             seq('copy', '(', $.expr, ')'),
             prec_r(seq('hook', $.expr)),
             seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event_hdr, '}'),
             seq('function', $.begin_lambda, $.lambda_body),
+
+            // Lower precedence here to favor local-variable statements
+            prec_r(-1, seq('local', $.id, '=', $.expr)),
         ),
 
         expr_list: $ => list1($.expr, ','),
@@ -277,7 +281,7 @@ module.exports = grammar({
         hook: $ => prec(1, seq('hook', $.id, $.func_params, optional($.attr_list))),
         event: $ => seq(optional('redef'), 'event', $.id, $.func_params, optional($.attr_list)),
 
-        func_body: $ => seq('{', repeat($.stmt), '}'),
+        func_body: $ => seq('{', optional($.stmt_list), '}'),
 
         // Precedence here is to disambiguate other interpretations of the colon
         // and type, arising in expressions.
@@ -293,7 +297,7 @@ module.exports = grammar({
 
         capture: $ => seq(optional('copy'), $.id),
 
-        lambda_body: $ => seq('{', repeat($.stmt), '}'),
+        lambda_body: $ => seq('{', optional($.stmt_list), '}'),
 
         // The "preprocessor" options. We include more than conditionals here.
         preproc: $ => choice(
