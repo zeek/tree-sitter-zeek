@@ -7,10 +7,13 @@ prec_l = prec.left;
 function list1(item, sep, allow_final_sep=false) {
     if ( allow_final_sep ) {
         return choice(
-            seq(repeat(seq(item, sep)), item),
+            item,
+            seq(repeat1(seq(item, sep)), item),
             repeat1(seq(item, sep)));
     } else {
-        return repeat1(seq(repeat(seq(item, sep)), item));
+        return choice(
+            item,
+            seq(repeat1(seq(item, sep)), item));
     }
 }
 
@@ -178,7 +181,7 @@ module.exports = grammar({
             seq('&create_expire', '=', $.expr),
             seq('&default', '=', $.expr),
             seq('&deprecated', '=', $.string),
-            seq('&del_func', '=', $.expr),
+            seq('&delete_func', '=', $.expr),
             seq('&expire_func', '=', $.expr),
             seq('&on_change', '=', $.expr),
             seq('&priority', '=', $.expr),
@@ -271,7 +274,7 @@ module.exports = grammar({
             $.interval,
             $.string,
             $.floatp,
-            $.integer,
+            prec(-10, $.integer),
         ),
 
         func_hdr: $ => choice($.func, $.hook, $.event),
@@ -302,7 +305,7 @@ module.exports = grammar({
             seq('@deprecated', optional('('), $.string, optional(')')),
             seq('@load', $.file),
             seq('@load-sigs', $.file),
-            seq('@prefixes', choice('=', '+='), $.id),
+            seq('@prefixes', choice('=', '+='), $.file),
             seq('@if', '(', $.expr, ')'),
             seq('@ifdef', '(', $.id, ')'),
             seq('@ifndef', '(', $.id, ')'),
@@ -323,13 +326,13 @@ module.exports = grammar({
         port: $ => /[0-9]+\/(tcp|udp|icmp|unknown)/,
 
         integer: $ => /[0-9]+/,
-        floatp: $ => /(([0-9]*\.?[0-9])|([0-9]\.?[0-9]*))([eE][-+]?[0-9])?/,
+        floatp: $ => /(([0-9]*\.?[0-9]+)|([0-9]+\.[0-9]*))([eE][-+]?[0-9]+)?/,
         hex: $ => /0x[0-9a-fA-F]+/,
 
-        // Intervals can be expressed without whitespace, e.g. "24hrs", so we
-        // can't handle number and unit as separate tokens. We treat the whole
-        // thing as a regex.
-        interval: $ => /[0-9]+(\.[0-9]+)?[ \t]*(day|hr|min|sec|msec|usec)s?/,
+        // For some reason I need to call out integers as a choice here
+        // explicitly -- floatp's ability to parse an integer doesn't trigger.
+        interval: $ => seq(choice($.integer, $.floatp), $.time_unit),
+        time_unit: $ => /(day|hr|min|sec|msec|usec)s?/,
 
         // We require hostnames to have a dot. This is a departure from Zeek,
         // but one that avoids several annoying confusions with other constants.
