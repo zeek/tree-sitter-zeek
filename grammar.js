@@ -319,7 +319,13 @@ module.exports = grammar({
         file: $ => /[^ \t\r\n]+/,
         pattern: $ => /\/((\\\/)?[^\r\n\/]?)*\/i?/,
 
-        // Sigh ... https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
+        // https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
+        //
+        // This is technically more narrow than Zeek's own IPv6 regex in a few
+        // specific cases (IPv6-embedded v4 comes to mind, where Zeek accepts
+        // technically invalid strings). Might want to move to Zeek's regex, for
+        // consistency.
+        //
         ipv6: $ => /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/,
         ipv4: $ => /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/,
 
@@ -341,7 +347,7 @@ module.exports = grammar({
         // Plain string characters or escape sequences, wrapped in double-quotes.
         string: $ => /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
         
-        minor_comment: $ => /#[^#].*\n/,
+        minor_comment: $ => /#[^#][^\n]*/,
 
         // Zeekygen comments come in three flavors: a head one at the beginning
         // of a script (##!), one that refers to the previous node (##<), and
@@ -350,10 +356,15 @@ module.exports = grammar({
         zeekygen_head_comment: $ => /##![^\n]*/,
         zeekygen_prev_comment: $ => /##<[^\n]*/,
         zeekygen_next_comment: $ => /##[^\n]*/,
+
+        // We track newlines explicitly -- this gives us the ability to honor
+        // existing formatting in select places.
+        nl: $ => /\n/,
     },
 
     'extras': $ => [
-        /[ \t\n]+/,
+        /[ \t]+/,
+        $.nl,
         $.minor_comment,
         $.zeekygen_head_comment,
         $.zeekygen_prev_comment,
