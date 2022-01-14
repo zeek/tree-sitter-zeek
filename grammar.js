@@ -22,11 +22,11 @@ module.exports = grammar({
 
     rules: {
         source_file: $ => seq(
-            repeat($.decl),
+            repeat($._decl),
             repeat($.stmt),
         ),
 
-        decl: $ => choice(
+        _decl: $ => choice(
             $.module_decl,
             $.export_decl,
             $.global_decl,
@@ -43,7 +43,7 @@ module.exports = grammar({
         ),
 
         module_decl: $ => seq('module', $.id, ';'),
-        export_decl: $ => seq('export', '{', repeat($.decl), '}'),
+        export_decl: $ => seq('export', '{', repeat($._decl), '}'),
 
         // A change here over Zeek's parser: we make the combo of init class
         // and initializer jointly optional, instead of individually. Helps
