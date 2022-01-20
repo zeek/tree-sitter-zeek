@@ -75,7 +75,7 @@ module.exports = grammar({
             // Associativity here works around theoretical ambiguity if "when" nested:
             prec_r(seq(
                 optional('return'),
-                'when', '(', $.expr, ')', $.stmt,
+                'when', optional($.capture_list), '(', $.expr, ')', $.stmt,
                 optional(seq('timeout', $.expr, '{', optional($.stmt_list), '}')),
             )),
             seq($.index_slice, '=', $.expr, ';'),
