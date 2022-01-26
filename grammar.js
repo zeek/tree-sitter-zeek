@@ -347,19 +347,19 @@ module.exports = grammar({
         // Plain string characters or escape sequences, wrapped in double-quotes.
         string: $ => /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
         
-        minor_comment: $ => /#[^#][^\n]*/,
+        minor_comment: $ => /#[^#][^\r\n]*/,
 
         // Zeekygen comments come in three flavors: a head one at the beginning
         // of a script (##!), one that refers to the previous node (##<), and
         // ones that refer to the subsequent one. Note that we skip the final
         // newline.
-        zeekygen_head_comment: $ => /##![^\n]*/,
-        zeekygen_prev_comment: $ => /##<[^\n]*/,
-        zeekygen_next_comment: $ => /##[^\n]*/,
+        zeekygen_head_comment: $ => /##![^\r\n]*/,
+        zeekygen_prev_comment: $ => /##<[^\r\n]*/,
+        zeekygen_next_comment: $ => /##[^\r\n]*/,
 
         // We track newlines explicitly -- this gives us the ability to honor
         // existing formatting in select places.
-        nl: $ => /\n/,
+        nl: $ => /\r?\n/,
     },
 
     'extras': $ => [
