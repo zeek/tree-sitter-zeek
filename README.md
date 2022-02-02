@@ -24,8 +24,11 @@ To use the generated parser directly (e.g. via any of tree-sitter's
 [language bindings](https://tree-sitter.github.io/tree-sitter/#language-bindings)),
 clone this repository recursively. We maintain a separate
 [git repository](https://github.com/zeek/tree-sitter-zeek-src)
-to track generated sources. You do not need the tree-sitter CLI to use
-those sources.
+to track generated sources. You do not need the tree-sitter CLI
+to use those sources in your tooling, but you'll likely want it
+anyway to explore the parser. For example, `tree-sitter parse <script>`
+produces the script's syntax tree, and `tree-sitter highlight <script>`
+shows syntax-highlighted sources.
 
 ## Building the parser
 
