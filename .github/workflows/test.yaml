@@ -1,0 +1,59 @@
+name: Build and tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  tests:
+    name: "Build and run parser tests"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+    steps:
+      - name: Checkout parser sources
+        uses: actions/checkout@v2
+
+      - name: Checkout Zeek sources
+        uses: actions/checkout@v2
+        with:
+          repository: zeek/zeek
+          path: test/zeek-src
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - run: npm install
+        
+      - name: Add Node.js to PATH
+        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+
+      - name: Setup tree-sitter
+        # "tree-sitter init-config" adds $HOME/github as a default
+        # directory to look for languages in, so we create a symlink
+        # that directs it to our local clone.
+        run: |
+          ln -s $(cd .. && pwd) $HOME/github
+          tree-sitter init-config
+
+      - name: Generate parser
+        run: tree-sitter generate
+
+      - name: Test Zeek grammar
+        run: cd test && ./parse-zeek-tree.sh ./zeek-src/scripts
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: parser-errors
+          path: |
+            *.zeek
+            *.err
