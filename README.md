@@ -1,6 +1,6 @@
 # tree-sitter-zeek
 
-[![Tests](https://github.com/ckreibich/tree-sitter-zeek/actions/workflows/test.yaml/badge.svg)](https://github.com/ckreibich/tree-sitter-zeek/actions/workflows/test.yaml)
+[![Tests](https://github.com/zeek/tree-sitter-zeek/actions/workflows/test.yaml/badge.svg)](https://github.com/zeek/tree-sitter-zeek/actions/workflows/test.yaml)
 
 A [Zeek](https://zeek.org) grammar for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
@@ -23,7 +23,7 @@ similars.
 To use the generated parser directly (e.g. via any of tree-sitter's
 [language bindings](https://tree-sitter.github.io/tree-sitter/#language-bindings)),
 clone this repository recursively. We maintain a separate
-[git repository](https://github.com/ckreibich/tree-sitter-zeek-src)
+[git repository](https://github.com/zeek/tree-sitter-zeek-src)
 to track generated sources. You do not need the tree-sitter CLI to use
 those sources.
 
