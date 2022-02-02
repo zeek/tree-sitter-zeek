@@ -246,7 +246,7 @@ module.exports = grammar({
 
             seq('(', $.expr, ')'),
             seq('copy', '(', $.expr, ')'),
-            prec_r(seq('hook', $.expr)),
+            prec_r(seq('hook', $.id, '(', optional(list1($.expr, ',')), ')')),
             seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event_hdr, '}'),
             seq('function', $.begin_lambda, $.func_body),
