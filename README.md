@@ -37,5 +37,7 @@ shows syntax-highlighted sources.
 
 ## Testing
 
-There's currently no `tree-sitter test` testsuite. Instead, a test driver
-clones the Zeek repository and runs on every Zeek script in the distribution.
+There's currently no `tree-sitter test` testsuite. Instead, a test driver runs
+the parser on every Zeek script in the Zeek distribution, reporting any
+errors. For CI, a Github Action workflow additionally clones the Zeek tree prior
+to running this test, to ensure that those Zeek scripts are available.
