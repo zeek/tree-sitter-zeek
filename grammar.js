@@ -37,7 +37,7 @@ module.exports = grammar({
             $.redef_record_decl,
             $.type_decl,
             $.func_decl,
-            $.preproc,
+            $.preproc_directive,
         ),
 
         module_decl: $ => seq('module', $.id, ';'),
@@ -54,7 +54,7 @@ module.exports = grammar({
         redef_enum_decl: $ => seq('redef', 'enum', $.id, '+=', '{', $.enum_body, '}', ';'),
         redef_record_decl: $ => seq('redef', 'record', $.id, '+=', '{', repeat($.type_spec), '}', optional($.attr_list), ';'),
         type_decl: $ => seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
-        func_decl: $ => seq($.func_hdr, repeat($.preproc), $.func_body),
+        func_decl: $ => seq($.func_hdr, repeat($.preproc_directive), $.func_body),
 
         stmt: $ => choice(
             // TODO: @no-test support
@@ -81,7 +81,7 @@ module.exports = grammar({
             seq($.index_slice, '=', $.expr, ';'),
             seq($.expr, ';'),
             // Same ambiguity as above for 'const'
-            prec(-1, $.preproc),
+            prec(-1, $.preproc_directive),
             ';',
         ),
 
@@ -300,17 +300,25 @@ module.exports = grammar({
 
         capture: $ => seq(optional('copy'), $.id),
 
-        // The "preprocessor" options. We include more than conditionals here.
-        preproc: $ => choice(
+        // The "preprocessor" directives. We include more than conditionals here.
+        preproc_directive: $ => choice(
             seq('@deprecated', optional('('), $.string, optional(')')),
             seq('@load', $.file),
             seq('@load-sigs', $.file),
+            seq('@load-plugin', $.id),
+            seq('@unload', $.file),
             seq('@prefixes', choice('=', '+='), $.file),
             seq('@if', '(', $.expr, ')'),
             seq('@ifdef', '(', $.id, ')'),
             seq('@ifndef', '(', $.id, ')'),
             '@endif',
             '@else',
+        ),
+
+        // These directives return strings.
+        string_directive: $ => choice(
+            '@DIR',
+            '@FILENAME',
         ),
 
         event_hdr: $ => seq($.id, '(', optional($.expr_list), ')'),
@@ -345,7 +353,10 @@ module.exports = grammar({
         hostname: $ => /([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z][A-Za-z0-9\-]*/,
 
         // Plain string characters or escape sequences, wrapped in double-quotes.
-        string: $ => /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
+        string: $ => choice(
+            /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
+            $.string_directive,
+        ),
         
         minor_comment: $ => /#[^#][^\r\n]*/,
 
