@@ -158,8 +158,7 @@ module.exports = grammar({
         init_class: $ => prec_r(choice('=', '+=', '-=')),
 
         init: $ => choice(
-            seq('{', '}'),
-            seq('{', repeat(seq($.expr, ',')), $.expr, '}'),
+            seq('{', optional(list1($.expr, ',', true)), '}'),
             $.expr,
         ),
 
