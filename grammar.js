@@ -165,7 +165,7 @@ module.exports = grammar({
         attr_list: $ => prec_l(repeat1($.attr)),
 
         attr: $ => prec_l(choice(
-            '&broker_store_allow_complex_type',
+            '&broker_allow_complex_type',
             '&deprecated',
             '&error_handler',
             '&is_assigned',
