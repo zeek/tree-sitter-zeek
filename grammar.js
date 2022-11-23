@@ -182,6 +182,7 @@ module.exports = grammar({
             seq('&deprecated', '=', $.string),
             seq('&delete_func', '=', $.expr),
             seq('&expire_func', '=', $.expr),
+            seq('&group', '=', $.expr),
             seq('&on_change', '=', $.expr),
             seq('&priority', '=', $.expr),
             seq('&read_expire', '=', $.expr),
