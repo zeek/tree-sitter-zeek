@@ -47,7 +47,9 @@ jobs:
         run: tree-sitter generate
 
       - name: Test Zeek grammar
-        run: cd test && ./parse-zeek-tree.sh ./zeek-src/scripts
+        run: |
+          tree-sitter test
+          cd test && ./parse-zeek-tree.sh ./zeek-src/scripts
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v2
