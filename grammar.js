@@ -358,25 +358,21 @@ module.exports = grammar({
             /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
             $.string_directive,
         ),
-        
-        minor_comment: $ => /#[^#][^\r\n]*/,
+
+        minor_comment: _ => token(seq('#', /.*/)),
 
         // Zeekygen comments come in three flavors: a head one at the beginning
         // of a script (##!), one that refers to the previous node (##<), and
         // ones that refer to the subsequent one. Note that we skip the final
         // newline.
-        zeekygen_head_comment: $ => /##![^\r\n]*/,
-        zeekygen_prev_comment: $ => /##<[^\r\n]*/,
-        zeekygen_next_comment: $ => /##[^\r\n]*/,
-
-        // We track newlines explicitly -- this gives us the ability to honor
-        // existing formatting in select places.
-        nl: $ => /\r?\n/,
+        zeekygen_head_comment: _ => token(seq('##!', /.*/)),
+        zeekygen_prev_comment: _ => token(seq('##<', /.*/)),
+        zeekygen_next_comment: _ => token(seq('##', /.*/)),
     },
 
     'extras': $ => [
         /[ \t]+/,
-        $.nl,
+        /\r?\n/,
         $.minor_comment,
         $.zeekygen_head_comment,
         $.zeekygen_prev_comment,

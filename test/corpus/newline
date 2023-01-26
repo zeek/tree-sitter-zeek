@@ -11,17 +11,15 @@ type X: record {
 --------------------------------------------------------------------------------
 
 (source_file
-  (nl)
   (decl
     (type_decl
       (id)
       (type
-        (nl)
         (minor_comment)
-        (nl)
         (minor_comment)
-        (nl))))
-  (nl))
+        (type_spec
+          (id)
+          (type))))))
 
 ================================================================================
 trailing comment
@@ -36,15 +34,12 @@ type X: record {
 --------------------------------------------------------------------------------
 
 (source_file
-  (nl)
-  (ERROR
-    (id)
-    (nl)
-    (type_spec
+  (decl
+    (type_decl
       (id)
-      (type)))
-  (nl)
-  (minor_comment)
-  (nl)
-  (minor_comment)
-  (nl))
+      (type
+        (type_spec
+          (id)
+          (type))
+        (minor_comment)
+        (minor_comment)))))
