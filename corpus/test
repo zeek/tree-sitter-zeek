@@ -31,14 +31,14 @@ function foo()
   (module_decl
     (id))
   (export_decl
-    (global_decl
+    (var_decl
       (id)
       (initializer
         (init_class)
         (expr
           (constant
             (integer))))))
-  (global_decl
+  (var_decl
     (id)
     (initializer
       (init_class)
@@ -87,9 +87,10 @@ function foo()
         (func_params)))
     (func_body
       (stmt_list
-        (id)
-        (initializer
-          (init_class)
-          (expr
-            (constant
-              (integer))))))))
+        (var_decl
+          (id)
+          (initializer
+            (init_class)
+            (expr
+              (constant
+                (integer)))))))))

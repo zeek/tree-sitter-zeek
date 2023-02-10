@@ -29,7 +29,7 @@ module.exports = grammar({
         _decl: $ => choice(
             $.module_decl,
             $.export_decl,
-            $.global_decl,
+            $.var_decl,
             $.option_decl,
             $.const_decl,
             $.redef_decl,
@@ -46,7 +46,12 @@ module.exports = grammar({
         // A change here over Zeek's parser: we make the combo of init class
         // and initializer jointly optional, instead of individually. Helps
         // avoid ambiguity.
-        global_decl: $ => seq('global', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
+        var_decl: $ => seq(
+            field('scope', choice('global', 'local')),
+            $.id,
+            optional(seq(':', $.type)),
+            optional($.initializer),
+            optional($.attr_list), ';'),
         option_decl: $ => seq('option', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
         const_decl: $ => seq('const', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
         redef_decl: $ => seq('redef', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
@@ -69,7 +74,8 @@ module.exports = grammar({
             seq(choice('next', 'break', 'fallthrough'), ';'),
             seq('return', optional($.expr), ';'),
             seq(choice('add', 'delete'), $.expr, ';'),
-            seq('local', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';'),
+            // Precedence works around ambiguity with `var_decl` in `_decl` at `source_file` scope.
+            prec(-1, $.var_decl),
             // Precedence here works around ambiguity with similar global declaration:
             prec(-1, seq('const', $.id, optional(seq(':', $.type)), optional($.initializer), optional($.attr_list), ';')),
             // Associativity here works around theoretical ambiguity if "when" nested:
