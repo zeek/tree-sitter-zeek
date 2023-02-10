@@ -170,11 +170,11 @@ module.exports = grammar({
         type_spec: $ => seq($.id, ':', $.type, optional($.attr_list), ';'),
 
         initializer: $ => seq(
-            optional($.init_class),
+            optional($.init_kind),
             $.expr,
         ),
 
-        init_class: _ => prec_r(choice('=', '+=', '-=')),
+        init_kind: _ => prec_r(choice('=', '+=', '-=')),
 
         attr_list: $ => prec_l(repeat1($.attr)),
 

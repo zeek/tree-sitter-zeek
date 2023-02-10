@@ -34,28 +34,28 @@ function foo()
     (var_decl
       (id)
       (initializer
-        (init_class)
+        (init_kind)
         (expr
           (constant
             (integer))))))
   (var_decl
     (id)
     (initializer
-      (init_class)
+      (init_kind)
       (expr
         (constant
           (integer)))))
   (option_decl
     (id)
     (initializer
-      (init_class)
+      (init_kind)
       (expr
         (constant
           (boolean)))))
   (const_decl
     (id)
     (initializer
-      (init_class)
+      (init_kind)
       (expr
         (constant
           (boolean)))))
@@ -89,7 +89,7 @@ function foo()
       (var_decl
         (id)
         (initializer
-          (init_class)
+          (init_kind)
           (expr
             (constant
               (integer))))))))
@@ -107,7 +107,7 @@ global y = r?$a;
   (var_decl
     (id)
     (initializer
-      (init_class)
+      (init_kind)
       (expr
         (field_access
           (expr
@@ -116,7 +116,7 @@ global y = r?$a;
   (var_decl
     (id)
     (initializer
-      (init_class)
+      (init_kind)
       (expr
         (field_check
           (expr
