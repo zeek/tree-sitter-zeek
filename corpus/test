@@ -18,7 +18,7 @@ redef record X += {
 };
 
 type E: enum { eA, eB };
-redef enum E += { eC };
+redef enum E += { eC = 3 };
 
 function foo()
 	{
@@ -72,16 +72,16 @@ function foo()
   (type_decl
     (id)
     (type
-      (enum_body
-        (enum_body_elem
-          (id))
-        (enum_body_elem
-          (id)))))
+      (enumerator
+        (id))
+      (enumerator
+        (id))))
   (redef_enum_decl
     (id)
-    (enum_body
-      (enum_body_elem
-        (id))))
+    (enumerator
+      (id)
+      (constant
+        (integer))))
   (func_decl
     (func_hdr
       (func
