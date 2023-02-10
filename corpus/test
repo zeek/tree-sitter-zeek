@@ -87,10 +87,9 @@ function foo()
         (func_params)))
     (func_body
       (stmt_list
-        (stmt
-          (id)
-          (initializer
-            (init_class)
-            (expr
-              (constant
-                (integer)))))))))
+        (id)
+        (initializer
+          (init_class)
+          (expr
+            (constant
+              (integer))))))))

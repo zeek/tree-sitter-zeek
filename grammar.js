@@ -23,7 +23,7 @@ module.exports = grammar({
     rules: {
         source_file: $ => seq(
             repeat($._decl),
-            repeat($.stmt),
+            repeat($._stmt),
         ),
 
         _decl: $ => choice(
@@ -56,16 +56,16 @@ module.exports = grammar({
         type_decl: $ => seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
         func_decl: $ => seq($.func_hdr, repeat($.preproc_directive), $.func_body),
 
-        stmt: $ => choice(
+        _stmt: $ => choice(
             // TODO: @no-test support
             seq('{', optional($.stmt_list), '}'),
             seq('print', $.expr_list, ';'),
             seq('event', $.event_hdr, ';'),
-            prec_r(seq('if', '(', $.expr, ')', $.stmt, optional(seq('else', $.stmt)))),
+            prec_r(seq('if', '(', $.expr, ')', $._stmt, optional(seq('else', $._stmt)))),
             seq('switch', $.expr, '{', optional($.case_list), '}'),
-            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')', $.stmt),
-            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')', $.stmt),
-            seq('while', '(', $.expr, ')', $.stmt),
+            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')', $._stmt),
+            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')', $._stmt),
+            seq('while', '(', $.expr, ')', $._stmt),
             seq(choice('next', 'break', 'fallthrough'), ';'),
             seq('return', optional($.expr), ';'),
             seq(choice('add', 'delete'), $.expr, ';'),
@@ -75,7 +75,7 @@ module.exports = grammar({
             // Associativity here works around theoretical ambiguity if "when" nested:
             prec_r(seq(
                 optional('return'),
-                'when', optional($.capture_list), '(', $.expr, ')', $.stmt,
+                'when', optional($.capture_list), '(', $.expr, ')', $._stmt,
                 optional(seq('timeout', $.expr, '{', optional($.stmt_list), '}')),
             )),
             seq($.index_slice, '=', $.expr, ';'),
@@ -85,7 +85,7 @@ module.exports = grammar({
             ';',
         ),
 
-        stmt_list: $ => repeat1($.stmt),
+        stmt_list: $ => repeat1($._stmt),
 
         case_list: $ => repeat1(
             choice(
