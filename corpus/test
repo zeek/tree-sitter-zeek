@@ -213,26 +213,31 @@ function foo(xs: vector of int): int
             (type))))
       (type))
     (stmt_list
-      (id)
-      (expr
-        (id))
-      (id)
-      (expr
-        (id))
-      (expr
-        (constant
-          (boolean)))
-      (expr
+      (for
+        (id)
+        (expr
+          (id)))
+      (for
+        (id)
+        (expr
+          (id)))
+      (while
         (expr
           (constant
-            (integer))))
-      (case_list
-        (expr_list
+            (boolean))))
+      (switch
+        (expr
           (expr
             (constant
               (integer))))
-        (stmt_list)
-        (stmt_list))
-      (expr
-        (constant
-          (integer))))))
+        (case_list
+          (expr_list
+            (expr
+              (constant
+                (integer))))
+          (stmt_list)
+          (stmt_list)))
+      (return
+        (expr
+          (constant
+            (integer)))))))

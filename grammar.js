@@ -67,13 +67,12 @@ module.exports = grammar({
             seq('{', optional($.stmt_list), '}'),
             seq('print', $.expr_list, ';'),
             seq('event', $.event_hdr, ';'),
-            prec_r(seq('if', '(', $.expr, ')', $._stmt, optional(seq('else', $._stmt)))),
-            seq('switch', $.expr, '{', optional($.case_list), '}'),
-            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')', $._stmt),
-            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')', $._stmt),
-            seq('while', '(', $.expr, ')', $._stmt),
+            $.switch,
+            $.if,
+            $.for,
+            $.while,
+            $.return,
             seq(choice('next', 'break', 'fallthrough'), ';'),
-            seq('return', optional($.expr), ';'),
             seq(choice('add', 'delete'), $.expr, ';'),
             // Precedence works around ambiguity with `var_decl` in `_decl` at `source_file` scope.
             prec(-1, $.var_decl),
@@ -91,6 +90,19 @@ module.exports = grammar({
             prec(-1, $.preproc_directive),
             ';',
         ),
+
+        if: $ => prec_r(seq('if', '(', $.expr, ')', $._stmt, optional(seq('else', $._stmt)))),
+
+        for: $ => choice(
+            seq('for', '(', $.id, optional(seq(',', $.id)), 'in', $.expr, ')', $._stmt),
+            seq('for', '(', '[', list1($.id, ','), ']', optional(seq(',', $.id)), 'in', $.expr, ')', $._stmt),
+        ),
+
+        while: $ => seq('while', '(', $.expr, ')', $._stmt),
+
+        switch: $ => seq('switch', $.expr, '{', optional($.case_list), '}'),
+
+        return: $ => seq('return', optional($.expr), ';'),
 
         stmt_list: $ => repeat1($._stmt),
 
