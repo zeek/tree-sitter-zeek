@@ -270,8 +270,7 @@ module.exports = grammar({
             prec_l(seq($.ipv4, optional(seq('/', /[0-9]+/)))),
             prec_l(seq($.ipv6, optional(seq('/', /[0-9]+/)))),
             $.hostname,
-            'T',
-            'F',
+            $.boolean,
             $.hex,
             $.port,
             $.interval,
@@ -345,6 +344,8 @@ module.exports = grammar({
         integer: _ => /[0-9]+/,
         floatp: _ => /(([0-9]*\.?[0-9]+)|([0-9]+\.[0-9]*))([eE][-+]?[0-9]+)?/,
         hex: _ => /0x[0-9a-fA-F]+/,
+
+        boolean: _ => choice('T', 'F'),
 
         // For some reason I need to call out integers as a choice here
         // explicitly -- floatp's ability to parse an integer doesn't trigger.

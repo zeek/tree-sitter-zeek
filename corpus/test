@@ -50,13 +50,15 @@ function foo()
     (initializer
       (init_class)
       (expr
-        (constant))))
+        (constant
+          (boolean)))))
   (const_decl
     (id)
     (initializer
       (init_class)
       (expr
-        (constant))))
+        (constant
+          (boolean)))))
   (type_decl
     (id)
     (type))
