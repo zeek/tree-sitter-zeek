@@ -26,20 +26,9 @@ function foo()
 --------------------------------------------------------------------------------
 
 (source_file
-  (decl
-    (module_decl
-      (id)))
-  (decl
-    (export_decl
-      (decl
-        (global_decl
-          (id)
-          (initializer
-            (init_class)
-            (expr
-              (constant
-                (integer))))))))
-  (decl
+  (module_decl
+    (id))
+  (export_decl
     (global_decl
       (id)
       (initializer
@@ -47,51 +36,51 @@ function foo()
         (expr
           (constant
             (integer))))))
-  (decl
-    (option_decl
+  (global_decl
+    (id)
+    (initializer
+      (init_class)
+      (expr
+        (constant
+          (integer)))))
+  (option_decl
+    (id)
+    (initializer
+      (init_class)
+      (expr
+        (constant))))
+  (const_decl
+    (id)
+    (initializer
+      (init_class)
+      (expr
+        (constant))))
+  (type_decl
+    (id)
+    (type))
+  (redef_record_decl
+    (id)
+    (type_spec
       (id)
-      (initializer
-        (init_class)
-        (expr
-          (constant)))))
-  (decl
-    (const_decl
-      (id)
-      (initializer
-        (init_class)
-        (expr
-          (constant)))))
-  (decl
-    (type_decl
-      (id)
-      (type)))
-  (decl
-    (redef_record_decl
-      (id)
-      (type_spec
-        (id)
-        (type)
-        (attr_list
-          (attr)))))
-  (decl
-    (type_decl
-      (id)
-      (type
-        (enum_body
-          (enum_body_elem
-            (id))
-          (enum_body_elem
-            (id))))))
-  (decl
-    (redef_enum_decl
-      (id)
+      (type)
+      (attr_list
+        (attr))))
+  (type_decl
+    (id)
+    (type
       (enum_body
         (enum_body_elem
+          (id))
+        (enum_body_elem
           (id)))))
-  (decl
-    (func_decl
-      (func_hdr
-        (func
-          (id)
-          (func_params)))
-      (func_body))))
+  (redef_enum_decl
+    (id)
+    (enum_body
+      (enum_body_elem
+        (id))))
+  (func_decl
+    (func_hdr
+      (func
+        (id)
+        (func_params)))
+    (func_body)))
