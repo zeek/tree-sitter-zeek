@@ -1,0 +1,97 @@
+================================================================================
+Declarations
+================================================================================
+
+module foo;
+
+export {
+	global i = 42;
+}
+
+global j = 42;
+option option_ = T;
+const const_ = F;
+
+type X: record { };
+redef record X += {
+	x: count &optional;
+};
+
+type E: enum { eA, eB };
+redef enum E += { eC };
+
+function foo()
+	{ }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl
+    (module_decl
+      (id)))
+  (decl
+    (export_decl
+      (decl
+        (global_decl
+          (id)
+          (initializer
+            (init_class)
+            (expr
+              (constant
+                (integer))))))))
+  (decl
+    (global_decl
+      (id)
+      (initializer
+        (init_class)
+        (expr
+          (constant
+            (integer))))))
+  (decl
+    (option_decl
+      (id)
+      (initializer
+        (init_class)
+        (expr
+          (constant)))))
+  (decl
+    (const_decl
+      (id)
+      (initializer
+        (init_class)
+        (expr
+          (constant)))))
+  (decl
+    (type_decl
+      (id)
+      (type)))
+  (decl
+    (redef_record_decl
+      (id)
+      (type_spec
+        (id)
+        (type)
+        (attr_list
+          (attr)))))
+  (decl
+    (type_decl
+      (id)
+      (type
+        (enum_body
+          (enum_body_elem
+            (id))
+          (enum_body_elem
+            (id))))))
+  (decl
+    (redef_enum_decl
+      (id)
+      (enum_body
+        (enum_body_elem
+          (id)))))
+  (decl
+    (func_decl
+      (func_hdr
+        (func
+          (id)
+          (func_params)))
+      (func_body))))
