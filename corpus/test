@@ -173,3 +173,66 @@ redef event foo(x: count)
     (stmt_list
       (expr
         (id)))))
+
+================================================================================
+Simple statements
+================================================================================
+
+function foo(xs: vector of int): int
+	{
+	for ( _ in xs )
+		{ }
+
+	for ( [_] in xs )
+		{ }
+
+	while ( T )
+		{ }
+
+	switch ( 1 )
+		{
+		case 1:
+			fallthrough;
+		default:
+			break;
+		}
+
+	return 0;
+	}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (func_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type
+            (type))))
+      (type))
+    (stmt_list
+      (id)
+      (expr
+        (id))
+      (id)
+      (expr
+        (id))
+      (expr
+        (constant
+          (boolean)))
+      (expr
+        (expr
+          (constant
+            (integer))))
+      (case_list
+        (expr_list
+          (expr
+            (constant
+              (integer))))
+        (stmt_list)
+        (stmt_list))
+      (expr
+        (constant
+          (integer))))))
