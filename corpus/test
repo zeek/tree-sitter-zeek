@@ -112,14 +112,16 @@ global y = r?$a;
     (initializer
       (init_class)
       (expr
-        (expr
-          (id))
-        (id))))
+        (field_access
+          (expr
+            (id))
+          (id)))))
   (var_decl
     (id)
     (initializer
       (init_class)
       (expr
-        (expr
-          (id))
-        (id)))))
+        (field_check
+          (expr
+            (id))
+          (id))))))

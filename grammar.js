@@ -196,7 +196,7 @@ module.exports = grammar({
         expr: $ => choice(
             prec_l(9, seq($.expr, '[', $.expr_list, ']')),
             prec_l(9, seq($.expr, $.index_slice)),
-            prec_l(9, seq($.expr, '$', $.id)),
+            prec_l(9, choice($.field_access, $.field_check)),
 
             prec_r(8, seq('|', $.expr, '|')),
             prec_r(8, seq('++', $.expr)),
@@ -255,13 +255,15 @@ module.exports = grammar({
             seq('(', $.expr, ')'),
             seq('copy', '(', $.expr, ')'),
             prec_r(seq('hook', $.expr)),
-            seq($.expr, '?$', $.id),
             seq('schedule', $.expr, '{', $.event_hdr, '}'),
             seq('function', $.begin_lambda, $.func_body),
 
             // Lower precedence here to favor local-variable statements
             prec_r(-1, seq('local', $.id, '=', $.expr)),
         ),
+
+        field_access: $ => prec_l(seq($.expr, '$', $.id)),
+        field_check: $ => prec_l(seq($.expr, '?$', $.id)),
 
         expr_list: $ => list1($.expr, ',', true),
 
