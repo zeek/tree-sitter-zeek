@@ -364,18 +364,14 @@ module.exports = grammar({
         zeekygen_next_comment: _ => /##[^\r\n]*/,
 
         minor_comment: _ => /#[^\r\n]*/,
-
-        // We track newlines explicitly -- this gives us the ability to honor
-        // existing formatting in select places.
-        nl: _ => /\r?\n/,
     },
 
     'extras': $ => [
         /[ \t]+/,
-        $.nl,
         $.zeekygen_head_comment,
         $.zeekygen_prev_comment,
         $.zeekygen_next_comment,
         $.minor_comment,
+        /\r?\n/,
     ],
 });
