@@ -125,3 +125,63 @@ global y = r?$a;
           (expr
             (id))
           (id))))))
+
+================================================================================
+Function-likes
+================================================================================
+
+function foo(x: count)
+	{
+	x;
+	}
+hook foo(x: count)
+	{
+	x;
+	}
+redef event foo(x: count)
+	{
+	x;
+	}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (func_decl
+    (func_hdr
+      (func
+        (id)
+        (func_params
+          (formal_args
+            (formal_arg
+              (id)
+              (type))))))
+    (func_body
+      (stmt_list
+        (expr
+          (id)))))
+  (func_decl
+    (func_hdr
+      (hook
+        (id)
+        (func_params
+          (formal_args
+            (formal_arg
+              (id)
+              (type))))))
+    (func_body
+      (stmt_list
+        (expr
+          (id)))))
+  (func_decl
+    (func_hdr
+      (event
+        (id)
+        (func_params
+          (formal_args
+            (formal_arg
+              (id)
+              (type))))))
+    (func_body
+      (stmt_list
+        (expr
+          (id))))))
