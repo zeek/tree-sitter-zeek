@@ -37,6 +37,8 @@ module.exports = grammar({
             $.redef_record_decl,
             $.type_decl,
             $.func_decl,
+            $.hook_decl,
+            $.event_decl,
             $.preproc_directive,
         ),
 
@@ -59,7 +61,6 @@ module.exports = grammar({
         redef_enum_decl: $ => seq('redef', 'enum', $.id, '+=', '{', $._enum_body, '}', ';'),
         redef_record_decl: $ => seq('redef', 'record', $.id, '+=', '{', repeat($.type_spec), '}', optional($.attr_list), ';'),
         type_decl: $ => seq('type', $.id, ':', $.type, optional($.attr_list), ';'),
-        func_decl: $ => seq($.func_hdr, repeat($.preproc_directive), $.func_body),
 
         _stmt: $ => choice(
             // TODO: @no-test support
@@ -281,12 +282,10 @@ module.exports = grammar({
             prec(-10, $.integer),
         ),
 
-        func_hdr: $ => choice($.func, $.hook, $.event),
-
         // Precedences here are to avoid ambiguity with related expressions
-        func: $ => prec(1, seq('function', $.id, $.func_params, optional($.attr_list))),
-        hook: $ => prec(1, seq('hook', $.id, $.func_params, optional($.attr_list))),
-        event: $ => seq(optional('redef'), 'event', $.id, $.func_params, optional($.attr_list)),
+        func_decl: $ => prec(1, seq('function', $.id, $.func_params, optional($.attr_list), $.func_body)),
+        hook_decl: $ => prec(1, seq('hook', $.id, $.func_params, optional($.attr_list), $.func_body)),
+        event_decl: $ => seq(optional('redef'), 'event', $.id, $.func_params, optional($.attr_list), $.func_body),
 
         func_body: $ => seq('{', optional($.stmt_list), '}'),
 

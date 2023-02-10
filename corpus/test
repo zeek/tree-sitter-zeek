@@ -83,10 +83,8 @@ function foo()
       (constant
         (integer))))
   (func_decl
-    (func_hdr
-      (func
-        (id)
-        (func_params)))
+    (id)
+    (func_params)
     (func_body
       (stmt_list
         (var_decl
@@ -147,40 +145,34 @@ redef event foo(x: count)
 
 (source_file
   (func_decl
-    (func_hdr
-      (func
-        (id)
-        (func_params
-          (formal_args
-            (formal_arg
-              (id)
-              (type))))))
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type))))
     (func_body
       (stmt_list
         (expr
           (id)))))
-  (func_decl
-    (func_hdr
-      (hook
-        (id)
-        (func_params
-          (formal_args
-            (formal_arg
-              (id)
-              (type))))))
+  (hook_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type))))
     (func_body
       (stmt_list
         (expr
           (id)))))
-  (func_decl
-    (func_hdr
-      (event
-        (id)
-        (func_params
-          (formal_args
-            (formal_arg
-              (id)
-              (type))))))
+  (event_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type))))
     (func_body
       (stmt_list
         (expr

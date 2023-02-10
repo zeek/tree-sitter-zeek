@@ -1,9 +1,9 @@
 ;; Language features
 ;; -----------------
 
-(event (id) @function)
-(hook (id) @function)
-(func (id) @function)
+(event_decl (id) @function)
+(hook_decl (id) @function)
+(func_decl (id) @function)
 (type) @type
 (attr) @attribute
 
