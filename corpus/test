@@ -96,3 +96,30 @@ function foo()
             (expr
               (constant
                 (integer)))))))))
+
+================================================================================
+Record fields
+================================================================================
+
+global x = r$a;
+global y = r?$a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (var_decl
+    (id)
+    (initializer
+      (init_class)
+      (expr
+        (expr
+          (id))
+        (id))))
+  (var_decl
+    (id)
+    (initializer
+      (init_class)
+      (expr
+        (expr
+          (id))
+        (id)))))
