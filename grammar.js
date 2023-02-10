@@ -136,7 +136,7 @@ module.exports = grammar({
             seq($.id, optional($.deprecated)),
         ),
 
-        deprecated: $ => choice(
+        deprecated: _ => choice(
             '&deprecated',
             seq('&deprecated', '=', 'const'),
         ),
@@ -155,7 +155,7 @@ module.exports = grammar({
             $.expr,
         ),
 
-        init_class: $ => prec_r(choice('=', '+=', '-=')),
+        init_class: _ => prec_r(choice('=', '+=', '-=')),
 
         attr_list: $ => prec_l(repeat1($.attr)),
 
@@ -313,16 +313,16 @@ module.exports = grammar({
         ),
 
         // These directives return strings.
-        string_directive: $ => choice(
+        string_directive: _ => choice(
             '@DIR',
             '@FILENAME',
         ),
 
         event_hdr: $ => seq($.id, '(', optional($.expr_list), ')'),
 
-        id: $ => /[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)*/,
-        file: $ => /[^ \t\r\n]+/,
-        pattern: $ => /\/((\\\/)?[^\r\n\/]?)*\/i?/,
+        id: _ => /[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)*/,
+        file: _ => /[^ \t\r\n]+/,
+        pattern: _ => /\/((\\\/)?[^\r\n\/]?)*\/i?/,
 
         // https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
         //
@@ -331,43 +331,43 @@ module.exports = grammar({
         // technically invalid strings). Might want to move to Zeek's regex, for
         // consistency.
         //
-        ipv6: $ => /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/,
-        ipv4: $ => /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/,
+        ipv6: _ => /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/,
+        ipv4: _ => /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/,
 
-        port: $ => /[0-9]+\/(tcp|udp|icmp|unknown)/,
+        port: _ => /[0-9]+\/(tcp|udp|icmp|unknown)/,
 
-        integer: $ => /[0-9]+/,
-        floatp: $ => /(([0-9]*\.?[0-9]+)|([0-9]+\.[0-9]*))([eE][-+]?[0-9]+)?/,
-        hex: $ => /0x[0-9a-fA-F]+/,
+        integer: _ => /[0-9]+/,
+        floatp: _ => /(([0-9]*\.?[0-9]+)|([0-9]+\.[0-9]*))([eE][-+]?[0-9]+)?/,
+        hex: _ => /0x[0-9a-fA-F]+/,
 
         // For some reason I need to call out integers as a choice here
         // explicitly -- floatp's ability to parse an integer doesn't trigger.
         interval: $ => seq(choice($.integer, $.floatp), $.time_unit),
-        time_unit: $ => /(day|hr|min|sec|msec|usec)s?/,
+        time_unit: _ => /(day|hr|min|sec|msec|usec)s?/,
 
         // We require hostnames to have a dot. This is a departure from Zeek,
         // but one that avoids several annoying confusions with other constants.
-        hostname: $ => /([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z][A-Za-z0-9\-]*/,
+        hostname: _ => /([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z][A-Za-z0-9\-]*/,
 
         // Plain string characters or escape sequences, wrapped in double-quotes.
         string: $ => choice(
             /"([^\\\r\n\"]|\\([^\r\n]|[0-7]+|x[0-9a-fA-F]+))*"/,
             $.string_directive,
         ),
-        
+
         // Zeekygen comments come in three flavors: a head one at the beginning
         // of a script (##!), one that refers to the previous node (##<), and
         // ones that refer to the subsequent one. Note that we skip the final
         // newline.
-        zeekygen_head_comment: $ => /##![^\r\n]*/,
-        zeekygen_prev_comment: $ => /##<[^\r\n]*/,
-        zeekygen_next_comment: $ => /##[^\r\n]*/,
+        zeekygen_head_comment: _ => /##![^\r\n]*/,
+        zeekygen_prev_comment: _ => /##<[^\r\n]*/,
+        zeekygen_next_comment: _ => /##[^\r\n]*/,
 
-        minor_comment: $ => /#[^\r\n]*/,
+        minor_comment: _ => /#[^\r\n]*/,
 
         // We track newlines explicitly -- this gives us the ability to honor
         // existing formatting in select places.
-        nl: $ => /\r?\n/,
+        nl: _ => /\r?\n/,
     },
 
     'extras': $ => [
