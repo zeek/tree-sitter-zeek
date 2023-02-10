@@ -85,15 +85,14 @@ function foo()
   (func_decl
     (id)
     (func_params)
-    (func_body
-      (stmt_list
-        (var_decl
-          (id)
-          (initializer
-            (init_class)
-            (expr
-              (constant
-                (integer)))))))))
+    (stmt_list
+      (var_decl
+        (id)
+        (initializer
+          (init_class)
+          (expr
+            (constant
+              (integer))))))))
 
 ================================================================================
 Record fields
@@ -151,10 +150,9 @@ redef event foo(x: count)
         (formal_arg
           (id)
           (type))))
-    (func_body
-      (stmt_list
-        (expr
-          (id)))))
+    (stmt_list
+      (expr
+        (id))))
   (hook_decl
     (id)
     (func_params
@@ -162,10 +160,9 @@ redef event foo(x: count)
         (formal_arg
           (id)
           (type))))
-    (func_body
-      (stmt_list
-        (expr
-          (id)))))
+    (stmt_list
+      (expr
+        (id))))
   (event_decl
     (id)
     (func_params
@@ -173,7 +170,6 @@ redef event foo(x: count)
         (formal_arg
           (id)
           (type))))
-    (func_body
-      (stmt_list
-        (expr
-          (id))))))
+    (stmt_list
+      (expr
+        (id)))))

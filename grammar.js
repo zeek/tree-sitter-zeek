@@ -239,7 +239,7 @@ module.exports = grammar({
             prec_r(3, seq($.expr, '+=', $.expr)),
 
             prec(2, seq('$', $.id, '=', $.expr)),
-            prec(2, seq('$', $.id, $.begin_lambda, '=', $.func_body)),
+            prec(2, seq('$', $.id, $.begin_lambda, '=', $._func_body)),
 
             prec_l(1, seq('[', optional($.expr_list), ']')),
             prec_l(1, seq('{', optional($.expr_list), '}')),
@@ -257,7 +257,7 @@ module.exports = grammar({
             seq('copy', '(', $.expr, ')'),
             prec_r(seq('hook', $.expr)),
             seq('schedule', $.expr, '{', $.event_hdr, '}'),
-            seq('function', $.begin_lambda, $.func_body),
+            seq('function', $.begin_lambda, $._func_body),
 
             // Lower precedence here to favor local-variable statements
             prec_r(-1, seq('local', $.id, '=', $.expr)),
@@ -283,11 +283,11 @@ module.exports = grammar({
         ),
 
         // Precedences here are to avoid ambiguity with related expressions
-        func_decl: $ => prec(1, seq('function', $.id, $.func_params, optional($.attr_list), $.func_body)),
-        hook_decl: $ => prec(1, seq('hook', $.id, $.func_params, optional($.attr_list), $.func_body)),
-        event_decl: $ => seq(optional('redef'), 'event', $.id, $.func_params, optional($.attr_list), $.func_body),
+        func_decl: $ => prec(1, seq('function', $.id, $.func_params, optional($.attr_list), $._func_body)),
+        hook_decl: $ => prec(1, seq('hook', $.id, $.func_params, optional($.attr_list), $._func_body)),
+        event_decl: $ => seq(optional('redef'), 'event', $.id, $.func_params, optional($.attr_list), $._func_body),
 
-        func_body: $ => seq('{', optional($.stmt_list), '}'),
+        _func_body: $ => seq('{', optional($.stmt_list), '}'),
 
         // Precedence here is to disambiguate other interpretations of the colon
         // and type, arising in expressions.
