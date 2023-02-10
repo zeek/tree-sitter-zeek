@@ -21,7 +21,9 @@ type E: enum { eA, eB };
 redef enum E += { eC };
 
 function foo()
-	{ }
+	{
+	local x = 1;
+	}
 
 --------------------------------------------------------------------------------
 
@@ -83,4 +85,12 @@ function foo()
       (func
         (id)
         (func_params)))
-    (func_body)))
+    (func_body
+      (stmt_list
+        (stmt
+          (id)
+          (initializer
+            (init_class)
+            (expr
+              (constant
+                (integer)))))))))
