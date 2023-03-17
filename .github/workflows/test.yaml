@@ -55,5 +55,5 @@ jobs:
         with:
           name: parser-errors
           path: |
-            *.zeek
-            *.err
+            test/*.zeek
+            test/*.err
