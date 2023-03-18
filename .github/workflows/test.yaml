@@ -18,15 +18,15 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout parser sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Checkout Zeek sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: zeek/zeek
           path: test/zeek-src
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -50,10 +50,10 @@ jobs:
         run: cd test && ./parse-zeek-tree.sh ./zeek-src/scripts
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: parser-errors
           path: |
-            *.zeek
-            *.err
+            test/*.zeek
+            test/*.err

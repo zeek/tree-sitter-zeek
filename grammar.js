@@ -152,15 +152,10 @@ module.exports = grammar({
 
         initializer: $ => seq(
             optional($.init_class),
-            $.init,
+            $.expr,
         ),
 
         init_class: $ => prec_r(choice('=', '+=', '-=')),
-
-        init: $ => choice(
-            seq('{', optional(list1($.expr, ',', true)), '}'),
-            $.expr,
-        ),
 
         attr_list: $ => prec_l(repeat1($.attr)),
 
@@ -240,6 +235,7 @@ module.exports = grammar({
             prec(2, seq('$', $.id, $.begin_lambda, '=', $.func_body)),
 
             prec_l(1, seq('[', optional($.expr_list), ']')),
+            prec_l(1, seq('{', optional($.expr_list), '}')),
             prec_l(1, seq('record', '(', $.expr_list, ')')),
             prec_l(1, seq('table', '(', optional($.expr_list), ')', optional($.attr_list))),
             prec_l(1, seq('set', '(', optional($.expr_list), ')', optional($.attr_list))),
@@ -261,7 +257,7 @@ module.exports = grammar({
             prec_r(-1, seq('local', $.id, '=', $.expr)),
         ),
 
-        expr_list: $ => list1($.expr, ','),
+        expr_list: $ => list1($.expr, ',', true),
 
         constant: $ => choice(
             // Associativity here resolves ambiguity with division
