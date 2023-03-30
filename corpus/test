@@ -1,0 +1,243 @@
+================================================================================
+Declarations
+================================================================================
+
+module foo;
+
+export {
+	global i = 42;
+}
+
+global j = 42;
+option option_ = T;
+const const_ = F;
+
+type X: record { };
+redef record X += {
+	x: count &optional;
+};
+
+type E: enum { eA, eB };
+redef enum E += { eC = 3 };
+
+function foo()
+	{
+	local x = 1;
+	}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module_decl
+    (id))
+  (export_decl
+    (var_decl
+      (id)
+      (initializer
+        (init_kind)
+        (expr
+          (constant
+            (integer))))))
+  (var_decl
+    (id)
+    (initializer
+      (init_kind)
+      (expr
+        (constant
+          (integer)))))
+  (option_decl
+    (id)
+    (initializer
+      (init_kind)
+      (expr
+        (constant
+          (boolean)))))
+  (const_decl
+    (id)
+    (initializer
+      (init_kind)
+      (expr
+        (constant
+          (boolean)))))
+  (type_decl
+    (id)
+    (type))
+  (redef_record_decl
+    (id)
+    (type_spec
+      (id)
+      (type)
+      (attr_list
+        (attr))))
+  (type_decl
+    (id)
+    (type
+      (enumerator
+        (id))
+      (enumerator
+        (id))))
+  (redef_enum_decl
+    (id)
+    (enumerator
+      (id)
+      (constant
+        (integer))))
+  (func_decl
+    (id)
+    (func_params)
+    (stmt_list
+      (var_decl
+        (id)
+        (initializer
+          (init_kind)
+          (expr
+            (constant
+              (integer))))))))
+
+================================================================================
+Record fields
+================================================================================
+
+global x = r$a;
+global y = r?$a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (var_decl
+    (id)
+    (initializer
+      (init_kind)
+      (expr
+        (field_access
+          (expr
+            (id))
+          (id)))))
+  (var_decl
+    (id)
+    (initializer
+      (init_kind)
+      (expr
+        (field_check
+          (expr
+            (id))
+          (id))))))
+
+================================================================================
+Function-likes
+================================================================================
+
+function foo(x: count)
+	{
+	x;
+	}
+hook foo(x: count)
+	{
+	x;
+	}
+redef event foo(x: count)
+	{
+	x;
+	}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (func_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type))))
+    (stmt_list
+      (expr
+        (id))))
+  (hook_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type))))
+    (stmt_list
+      (expr
+        (id))))
+  (event_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type))))
+    (stmt_list
+      (expr
+        (id)))))
+
+================================================================================
+Simple statements
+================================================================================
+
+function foo(xs: vector of int): int
+	{
+	for ( _ in xs )
+		{ }
+
+	for ( [_] in xs )
+		{ }
+
+	while ( T )
+		{ }
+
+	switch ( 1 )
+		{
+		case 1:
+			fallthrough;
+		default:
+			break;
+		}
+
+	return 0;
+	}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (func_decl
+    (id)
+    (func_params
+      (formal_args
+        (formal_arg
+          (id)
+          (type
+            (type))))
+      (type))
+    (stmt_list
+      (for
+        (id)
+        (expr
+          (id)))
+      (for
+        (id)
+        (expr
+          (id)))
+      (while
+        (expr
+          (constant
+            (boolean))))
+      (switch
+        (expr
+          (expr
+            (constant
+              (integer))))
+        (case_list
+          (expr_list
+            (expr
+              (constant
+                (integer))))
+          (stmt_list)
+          (stmt_list)))
+      (return
+        (expr
+          (constant
+            (integer)))))))
