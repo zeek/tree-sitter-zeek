@@ -308,8 +308,14 @@ module.exports = grammar({
             seq('@load', $.file),
             seq('@load-plugin', $.id),
             seq('@load-sigs', $.file),
+            seq('@pragma', choice(seq('push', $.pragma_stack_choices),
+                                  seq('pop', $.pragma_stack_choices))),
             seq('@prefixes', choice('=', '+='), $.file),
             seq('@unload', $.file),
+        ),
+
+        pragma_stack_choices: $ => choice(
+            'ignore-deprecations',
         ),
 
         // These directives return strings.
