@@ -300,16 +300,22 @@ module.exports = grammar({
         // The "preprocessor" directives. We include more than conditionals here.
         preproc_directive: $ => choice(
             seq('@deprecated', optional('('), $.string, optional(')')),
-            seq('@load', $.file),
-            seq('@load-sigs', $.file),
-            seq('@load-plugin', $.id),
-            seq('@unload', $.file),
-            seq('@prefixes', choice('=', '+='), $.file),
+            '@else',
+            '@endif',
             seq('@if', '(', $.expr, ')'),
             seq('@ifdef', '(', $.id, ')'),
             seq('@ifndef', '(', $.id, ')'),
-            '@endif',
-            '@else',
+            seq('@load', $.file),
+            seq('@load-plugin', $.id),
+            seq('@load-sigs', $.file),
+            seq('@pragma', choice(seq('push', $.pragma_stack_choices),
+                                  seq('pop', $.pragma_stack_choices))),
+            seq('@prefixes', choice('=', '+='), $.file),
+            seq('@unload', $.file),
+        ),
+
+        pragma_stack_choices: $ => choice(
+            'ignore-deprecations',
         ),
 
         // These directives return strings.
