@@ -240,6 +240,7 @@ module.exports = grammar({
             prec_l(1, seq('table', '(', optional($.expr_list), ')', optional($.attr_list))),
             prec_l(1, seq('set', '(', optional($.expr_list), ')', optional($.attr_list))),
             prec_l(1, seq('vector', '(', optional($.expr_list), ')')),
+            prec_l(1, seq($.id, '(', optional($.expr_list), ')')),
             prec_l(1, seq($.expr, '(', optional($.expr_list), ')')),
 
             $.id,

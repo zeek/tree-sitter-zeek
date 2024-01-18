@@ -1,0 +1,40 @@
+================================================================================
+Function call
+================================================================================
+
+1;
+f(1);
+f(1) + f(1);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (constant
+        (integer))))
+  (nl)
+  (stmt
+    (expr
+      (id)
+      (expr_list
+        (expr
+          (constant
+            (integer))))))
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (id)
+        (expr_list
+          (expr
+            (constant
+              (integer)))))
+      (expr
+        (id)
+        (expr_list
+          (expr
+            (constant
+              (integer)))))))
+  (nl))
