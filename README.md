@@ -32,8 +32,8 @@ shows syntax-highlighted sources.
 
 ## Building the parser
 
-* Install [tree-sitter](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation) on your machine.
-* Generate the parser: run `tree-sitter generate`.
+- Install [tree-sitter](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation) on your machine.
+- Generate the parser: run `tree-sitter generate`.
 
 ## Testing
 
