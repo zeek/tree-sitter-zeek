@@ -41,3 +41,15 @@ There's currently no `tree-sitter test` testsuite. Instead, a test driver runs
 the parser on every Zeek script in the Zeek distribution, reporting any
 errors. For CI, a Github Action workflow additionally clones the Zeek tree prior
 to running this test, to ensure that those Zeek scripts are available.
+
+## Releasing a new version
+
+To release a new version update the version number in the following ecosystem-specific files:
+
+- `package.json`: key `version`
+  - `package-lock.json`: update `package.json` and run `npm install` to update the lock file.
+- `pyproject.toml`: key `project.version`
+- `Cargo.toml`: key `package.version`
+
+Once all versions are consistently updated create a version tag `vX.Y.Z` and
+push it. We trigger automatic publishing of releases for all tags.
