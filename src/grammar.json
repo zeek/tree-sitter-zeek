@@ -4286,7 +4286,7 @@
     },
     "id": {
       "type": "PATTERN",
-      "value": "[A-Za-z_][A-Za-z_0-9]*(::[A-Za-z_][A-Za-z_0-9]*)*"
+      "value": "(([A-Za-z_][A-Za-z_0-9]*)?::)?[A-Za-z_][A-Za-z_0-9]*"
     },
     "file": {
       "type": "PATTERN",
@@ -4416,4 +4416,3 @@
   "inline": [],
   "supertypes": []
 }
-
