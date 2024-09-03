@@ -3,8 +3,8 @@ package tree_sitter_zeek_test
 import (
 	"testing"
 
-	tree_sitter "github.com/smacker/go-tree-sitter"
-	"github.com/tree-sitter/tree-sitter-zeek"
+	tree_sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_zeek "github.com/tree-sitter/tree-sitter-zeek/bindings/go"
 )
 
 func TestCanLoadGrammar(t *testing.T) {
