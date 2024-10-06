@@ -1463,19 +1463,19 @@
   },
   {
     "type": "pattern",
-    "named": false
+    "named": true
   },
   {
     "type": "pattern",
-    "named": true
-  },
-  {
-    "type": "port",
     "named": false
   },
   {
     "type": "port",
     "named": true
+  },
+  {
+    "type": "port",
+    "named": false
   },
   {
     "type": "print",
