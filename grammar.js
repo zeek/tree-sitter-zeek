@@ -172,6 +172,7 @@ module.exports = grammar({
         // Same ambiguity as above for 'const'
         prec(-1, $.preproc_directive),
         ";",
+        seq("assert", $.expr, optional($.assert_msg), ";"),
       ),
 
     stmt_list: ($) => repeat1($.stmt),
@@ -187,6 +188,8 @@ module.exports = grammar({
 
     case_type_list: ($) =>
       list1(seq("type", $.type, optional(seq("as", $.id))), ","),
+
+    assert_msg: ($) => seq(",", $.expr),
 
     type: ($) =>
       choice(
