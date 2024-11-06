@@ -1,0 +1,33 @@
+================================================================================
+Assert
+================================================================================
+
+assert 1 == 2, "One is not two";
+assert 1 == 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (constant
+          (integer)))
+      (expr
+        (constant
+          (integer))))
+    (assert_msg
+      (expr
+        (constant
+          (string)))))
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (constant
+          (integer)))
+      (expr
+        (constant
+          (integer)))))
+  (nl))
