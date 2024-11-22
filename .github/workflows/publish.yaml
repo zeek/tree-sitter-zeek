@@ -10,6 +10,6 @@ concurrency:
 
 jobs:
   pypi:
-    uses: tree-sitter/workflows/.github/workflows/package-pypi.yml@9d0a482e6185682e43cdcc8a7486a4ff89b05517
+    uses: tree-sitter/workflows/.github/workflows/package-pypi.yml@d0a5fac82bafe359bb08fc9c64e3199899031692
     secrets:
       PYPI_API_TOKEN: ${{secrets.PYPI_API_TOKEN}}
