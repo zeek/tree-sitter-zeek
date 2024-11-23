@@ -1,7 +1,5 @@
 # tree-sitter-zeek
 
-[![Tests](https://github.com/zeek/tree-sitter-zeek/actions/workflows/test.yaml/badge.svg)](https://github.com/zeek/tree-sitter-zeek/actions/workflows/test.yaml)
-
 A [Zeek](https://zeek.org) grammar for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
 ## Background
