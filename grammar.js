@@ -1,3 +1,6 @@
+/// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
+
 // Aliases that make things easier to read
 prec_r = prec.right;
 prec_l = prec.left;
