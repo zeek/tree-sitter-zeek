@@ -739,6 +739,11 @@
     }
   },
   {
+    "type": "pragma",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "preproc_directive",
     "named": true,
     "fields": {},
@@ -756,6 +761,10 @@
         },
         {
           "type": "id",
+          "named": true
+        },
+        {
+          "type": "pragma",
           "named": true
         },
         {
@@ -821,6 +830,10 @@
       "types": [
         {
           "type": "attr_list",
+          "named": true
+        },
+        {
+          "type": "expr",
           "named": true
         },
         {
@@ -1277,6 +1290,10 @@
     "named": false
   },
   {
+    "type": "@pragma",
+    "named": false
+  },
+  {
     "type": "@prefixes",
     "named": false
   },
@@ -1493,6 +1510,10 @@
     "named": false
   },
   {
+    "type": "pop",
+    "named": false
+  },
+  {
     "type": "port",
     "named": true
   },
@@ -1502,6 +1523,10 @@
   },
   {
     "type": "print",
+    "named": false
+  },
+  {
+    "type": "push",
     "named": false
   },
   {
