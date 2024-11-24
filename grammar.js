@@ -89,12 +89,10 @@ module.exports = grammar({
       seq(
         "redef",
         "record",
-        $.id,
-        "+=",
-        "{",
-        repeat($.type_spec),
-        "}",
-        optional($.attr_list),
+        choice(
+          seq($.id, "+=", "{", repeat($.type_spec), "}", optional($.attr_list)),
+          seq($.expr, "-=", "{", $.attr_list, "}"),
+        ),
         ";",
       ),
     type_decl: ($) =>
@@ -482,6 +480,8 @@ module.exports = grammar({
     // existing formatting in select places.
     nl: ($) => /\r?\n/,
   },
+
+  conflicts: ($) => [[$.expr, $.redef_record_decl]],
 
   extras: ($) => [
     /[ \t]+/,
