@@ -422,7 +422,11 @@ module.exports = grammar({
         seq("@ifndef", "(", $.id, ")"),
         "@endif",
         "@else",
+        $.pragma,
       ),
+
+    pragma: () =>
+      seq(token("@pragma"), choice("push", "pop"), /[A-Za-z0-9][A-Za-z0-9\-]*/),
 
     // These directives return strings.
     string_directive: ($) => choice("@DIR", "@FILENAME"),
