@@ -431,7 +431,7 @@ module.exports = grammar({
 
     event_hdr: ($) => seq($.id, "(", optional($.expr_list), ")"),
 
-    id: () => /(([A-Za-z_][A-Za-z_0-9]*)?::)?[A-Za-z_][A-Za-z_0-9]*/,
+    id: () => /(::)?([A-Za-z_][A-Za-z_0-9]*)(::[A-Za-z_][A-Za-z_0-9]*)*/,
     file: ($) => /[^ \t\r\n]+/,
     pattern: ($) => /\/((\\\/)?[^\r\n\/]?)*\/i?/,
 
