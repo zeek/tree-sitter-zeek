@@ -1,3 +1,6 @@
+/// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
+
 // Aliases that make things easier to read
 prec_r = prec.right;
 prec_l = prec.left;
@@ -86,12 +89,10 @@ module.exports = grammar({
       seq(
         "redef",
         "record",
-        $.id,
-        "+=",
-        "{",
-        repeat($.type_spec),
-        "}",
-        optional($.attr_list),
+        choice(
+          seq($.id, "+=", "{", repeat($.type_spec), "}", optional($.attr_list)),
+          seq($.expr, "-=", "{", $.attr_list, "}"),
+        ),
         ";",
       ),
     type_decl: ($) =>
@@ -421,14 +422,18 @@ module.exports = grammar({
         seq("@ifndef", "(", $.id, ")"),
         "@endif",
         "@else",
+        $.pragma,
       ),
+
+    pragma: () =>
+      seq(token("@pragma"), choice("push", "pop"), /[A-Za-z0-9][A-Za-z0-9\-]*/),
 
     // These directives return strings.
     string_directive: ($) => choice("@DIR", "@FILENAME"),
 
     event_hdr: ($) => seq($.id, "(", optional($.expr_list), ")"),
 
-    id: () => /(([A-Za-z_][A-Za-z_0-9]*)?::)?[A-Za-z_][A-Za-z_0-9]*/,
+    id: () => /(::)?([A-Za-z_][A-Za-z_0-9]*)(::[A-Za-z_][A-Za-z_0-9]*)*/,
     file: ($) => /[^ \t\r\n]+/,
     pattern: ($) => /\/((\\\/)?[^\r\n\/]?)*\/i?/,
 
@@ -479,6 +484,8 @@ module.exports = grammar({
     // existing formatting in select places.
     nl: ($) => /\r?\n/,
   },
+
+  conflicts: ($) => [[$.expr, $.redef_record_decl]],
 
   extras: ($) => [
     /[ \t]+/,

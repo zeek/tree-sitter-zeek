@@ -1,0 +1,45 @@
+================================================================================
+Pragma
+================================================================================
+
+event run_sync_hook() {
+        hook Telemetry::sync();
+@pragma push ignore-deprecations
+        schedule sync_interval { run_sync_hook() };
+@pragma pop ignore-deprecations
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (nl)
+  (decl
+    (func_decl
+      (func_hdr
+        (event
+          (id)
+          (func_params)))
+      (func_body
+        (nl)
+        (stmt_list
+          (stmt
+            (expr
+              (expr
+                (id))))
+          (nl)
+          (stmt
+            (preproc_directive
+              (pragma)))
+          (nl)
+          (stmt
+            (expr
+              (expr
+                (id))
+              (event_hdr
+                (id))))
+          (nl)
+          (stmt
+            (preproc_directive
+              (pragma))))
+        (nl))))
+  (nl))

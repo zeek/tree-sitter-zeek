@@ -40,25 +40,40 @@ f(1) + f(1);
   (nl))
 
 ================================================================================
-Global IDs
+IDs
 ================================================================================
 
-global x: ::X;
-global x: GLOBAL::X;
-
+a;
+a01231;
+a::b;
+::a;
+GLOBAL::a; # Legacy syntax.
+Cluster::Supervisor::__init_cluster_nodes();
 ---
 
 (source_file
   (nl)
-  (decl
-    (global_decl
-      (id)
-      (type
-        (id))))
+  (stmt
+    (expr
+      (id)))
   (nl)
-  (decl
-    (global_decl
-      (id)
-      (type
-        (id))))
-  (nl))
+  (stmt
+    (expr
+      (id)))
+  (nl)
+  (stmt
+    (expr
+      (id)))
+  (nl)
+  (stmt
+    (expr
+      (id)))
+  (nl)
+  (stmt
+    (expr
+      (id)))
+  (minor_comment)
+  (nl)
+  (stmt
+    (expr
+      (id))))
