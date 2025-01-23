@@ -49,7 +49,7 @@ a::b;
 ::a;
 GLOBAL::a; # Legacy syntax.
 Cluster::Supervisor::__init_cluster_nodes();
----
+--------------------------------------------------------------------------------
 
 (source_file
   (nl)
@@ -77,3 +77,31 @@ Cluster::Supervisor::__init_cluster_nodes();
   (stmt
     (expr
       (id))))
+
+================================================================================
+Attributes
+================================================================================
+
+global ip: set[addr] = { 1.1.1.1, 1.1.1.2 } &ordered &redef;
+---
+
+(source_file
+  (nl)
+  (decl
+    (global_decl
+      (id)
+      (type
+        (type))
+      (initializer
+        (init_class)
+        (expr
+          (expr_list
+            (expr
+              (constant
+                (ipv4)))
+            (expr
+              (constant
+                (ipv4))))))
+      (attr_list
+        (attr)
+        (attr)))))

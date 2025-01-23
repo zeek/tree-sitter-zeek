@@ -258,6 +258,7 @@ module.exports = grammar({
           "&is_used",
           "&log",
           "&optional",
+          "&ordered",
           "&raw_output",
           "&redef",
           seq("&add_func", "=", $.expr),
