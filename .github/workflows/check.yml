@@ -21,6 +21,8 @@ jobs:
           ls -R "$PWD"
           echo "$GITHUB_PATH"
           cat "$GITHUB_PATH"
+          echo "$NODE_PATH"
+          ls -R "$NODE_PATH"
           which tree-sitter
       - uses: tree-sitter/parser-test-action@v2
         with:
