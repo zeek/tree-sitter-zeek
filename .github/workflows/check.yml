@@ -10,7 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: tree-sitter/setup-action/cli@v1
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+          node-version: 20
+      - run: |
+          echo "$PWD/node_modules/tree-sitter-cli/" >> "$GITHUB_PATH"
+      - run: |
+          echo "$PWD"
+          ls -R "$PWD"
+          echo "$GITHUB_PATH"
+          cat "$GITHUB_PATH"
+          which tree-sitter
       - uses: tree-sitter/parser-test-action@v2
         with:
           generate: true
