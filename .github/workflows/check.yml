@@ -14,6 +14,7 @@ jobs:
         with:
           cache: npm
           node-version: 20
+      - run: npm ci
       - run: |
           echo "$PWD/node_modules/tree-sitter-cli/" >> "$GITHUB_PATH"
       - run: |
