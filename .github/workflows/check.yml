@@ -15,6 +15,7 @@ jobs:
           cache: npm
           node-version: 20
       - run: npm ci
+      - run: which tree-sitter || true
       - run: |
           echo "$PWD/node_modules/tree-sitter-cli/" >> "$GITHUB_PATH"
       - run: |
@@ -22,8 +23,6 @@ jobs:
           ls -R "$PWD"
           echo "$GITHUB_PATH"
           cat "$GITHUB_PATH"
-          echo "$NODE_PATH"
-          ls -R "$NODE_PATH"
           which tree-sitter
       - uses: tree-sitter/parser-test-action@v2
         with:
