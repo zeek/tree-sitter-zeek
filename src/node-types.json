@@ -850,6 +850,7 @@
   {
     "type": "source_file",
     "named": true,
+    "root": true,
     "fields": {},
     "children": {
       "multiple": true,
@@ -1479,7 +1480,8 @@
   },
   {
     "type": "minor_comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "module",
@@ -1491,7 +1493,8 @@
   },
   {
     "type": "nl",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "of",
@@ -1607,15 +1610,18 @@
   },
   {
     "type": "zeekygen_head_comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "zeekygen_next_comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "zeekygen_prev_comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "{",
