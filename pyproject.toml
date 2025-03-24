@@ -9,13 +9,13 @@ version = "0.2.3"
 keywords = ["incremental", "parsing", "tree-sitter", "zeek"]
 classifiers = [
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: BSD License",
   "Topic :: Software Development :: Compilers",
   "Topic :: Text Processing :: Linguistic",
   "Typing :: Typed"
 ]
 requires-python = ">=3.10"
-license.text = "MIT"
+license.text = "BSD-3-Clause"
 readme = "README.md"
 
 [project.urls]
