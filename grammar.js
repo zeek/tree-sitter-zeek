@@ -217,7 +217,6 @@ module.exports = grammar({
         "string",
         "subnet",
         "time",
-        "timer",
         seq("enum", "{", $.enum_body, "}"),
         seq("file", "of", $.type),
         seq("list", "of", $.type),
