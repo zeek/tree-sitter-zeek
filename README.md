@@ -48,6 +48,8 @@ To release a new version update the version number in the following ecosystem-sp
   - `package-lock.json`: update `package.json` and run `npm install` to update the lock file.
 - `pyproject.toml`: key `project.version`
 - `Cargo.toml`: key `package.version`
+- `tree-sitter.json`: key `metadata.version`
+- `CMakeLists.txt`: `VERSION` in `project` call
 
 Once all versions are consistently updated create a version tag `vX.Y.Z` and
 push it. We trigger automatic publishing of releases for all tags.
