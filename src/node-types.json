@@ -389,6 +389,10 @@
           "named": true
         },
         {
+          "type": "enum_body",
+          "named": true
+        },
+        {
           "type": "event_hdr",
           "named": true
         },
@@ -418,6 +422,10 @@
         },
         {
           "type": "type",
+          "named": true
+        },
+        {
+          "type": "type_spec",
           "named": true
         }
       ]
@@ -1522,11 +1530,11 @@
   },
   {
     "type": "port",
-    "named": true
+    "named": false
   },
   {
     "type": "port",
-    "named": false
+    "named": true
   },
   {
     "type": "print",
@@ -1582,10 +1590,6 @@
   },
   {
     "type": "timeout",
-    "named": false
-  },
-  {
-    "type": "timer",
     "named": false
   },
   {
