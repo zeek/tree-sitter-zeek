@@ -52,9 +52,5 @@ ecosystem-specific files:
 - `tree-sitter.json`: key `metadata.version`
 - `CMakeLists.txt`: `VERSION` in `project` call
 
-With these changes regenerate the parser:
-
-    ./node_modules/tree-sitter-cli/tree-sitter generate
-
 Once all versions are consistently updated create a version tag `vX.Y.Z` and
 push it. We trigger automatic publishing of releases for all tags.
