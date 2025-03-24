@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-zeek
-        VERSION "0.2.4"
+        VERSION "0.2.5"
         DESCRIPTION "Zeek grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/tree-sitter/tree-sitter-zeek"
         LANGUAGES C)

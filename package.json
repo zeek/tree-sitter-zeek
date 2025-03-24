@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-zeek",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Zeek grammar for tree-sitter",
   "author": "The Zeek Team",
   "license": "BSD-3-Clause",
