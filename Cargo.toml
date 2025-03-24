@@ -2,7 +2,7 @@
 name = "tree-sitter-zeek"
 description = "Zeek grammar for tree-sitter"
 version = "0.2.3"
-license = "MIT"
+license = "BSD-3-Clause"
 readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "zeek"]
 categories = ["parsing", "text-editors"]

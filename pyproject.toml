@@ -9,13 +9,13 @@ version = "0.2.3"
 keywords = ["incremental", "parsing", "tree-sitter", "zeek"]
 classifiers = [
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: BSD License",
   "Topic :: Software Development :: Compilers",
   "Topic :: Text Processing :: Linguistic",
   "Typing :: Typed"
 ]
-requires-python = ">=3.9"
-license.text = "MIT"
+requires-python = ">=3.10"
+license.text = "BSD-3-Clause"
 readme = "README.md"
 
 [project.urls]
@@ -25,5 +25,5 @@ Homepage = "https://github.com/tree-sitter/tree-sitter-zeek"
 core = ["tree-sitter~=0.23"]
 
 [tool.cibuildwheel]
-build = "cp39-*"
+build = "cp310-*"
 build-frontend = "build"
