@@ -105,3 +105,37 @@ global ip: set[addr] = { 1.1.1.1, 1.1.1.2 } &ordered &redef;
       (attr_list
         (attr)
         (attr)))))
+
+================================================================================
+Type constants
+================================================================================
+
+print string;
+print vector of int;
+print interval;
+print table[int] of vector of table[string] of count;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr_list
+      (expr)))
+  (nl)
+  (stmt
+    (expr_list
+      (expr
+        (type))))
+  (nl)
+  (stmt
+    (expr_list
+      (expr)))
+  (nl)
+  (stmt
+    (expr_list
+      (expr
+        (type)
+        (type
+          (type
+            (type)
+            (type)))))))
