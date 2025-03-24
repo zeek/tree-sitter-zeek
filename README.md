@@ -42,7 +42,8 @@ to running this test, to ensure that those Zeek scripts are available.
 
 ## Releasing a new version
 
-To release a new version update the version number in the following ecosystem-specific files:
+To release a new version manually update the version number in the following
+ecosystem-specific files:
 
 - `package.json`: key `version`
   - `package-lock.json`: update `package.json` and run `npm install` to update the lock file.
@@ -50,6 +51,10 @@ To release a new version update the version number in the following ecosystem-sp
 - `Cargo.toml`: key `package.version`
 - `tree-sitter.json`: key `metadata.version`
 - `CMakeLists.txt`: `VERSION` in `project` call
+
+With these changes regenerate the parser:
+
+    ./node_modules/tree-sitter-cli/tree-sitter generate
 
 Once all versions are consistently updated create a version tag `vX.Y.Z` and
 push it. We trigger automatic publishing of releases for all tags.
