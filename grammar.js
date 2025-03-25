@@ -350,7 +350,7 @@ module.exports = grammar({
         $.id,
         $.constant,
         $.pattern,
-        $._simple_type,
+        alias($._simple_type, $.type),
 
         seq("(", $.expr, ")"),
         seq("copy", "(", $.expr, ")"),
