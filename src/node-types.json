@@ -389,10 +389,6 @@
           "named": true
         },
         {
-          "type": "enum_body",
-          "named": true
-        },
-        {
           "type": "event_hdr",
           "named": true
         },
@@ -422,10 +418,6 @@
         },
         {
           "type": "type",
-          "named": true
-        },
-        {
-          "type": "type_spec",
           "named": true
         }
       ]
