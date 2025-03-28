@@ -231,12 +231,7 @@ module.exports = grammar({
     enum_body: ($) => list1($.enum_body_elem, ",", true),
 
     enum_body_elem: ($) =>
-      choice(
-        seq($.id, "=", $.constant, optional($.deprecated)),
-        seq($.id, optional($.deprecated)),
-      ),
-
-    deprecated: ($) => choice("&deprecated", seq("&deprecated", "=", "const")),
+      seq($.id, optional(seq("=", $.constant)), optional($.attr)),
 
     func_params: ($) =>
       choice(seq("(", $.formal_args, ")", optional(seq(":", $.type)))),
