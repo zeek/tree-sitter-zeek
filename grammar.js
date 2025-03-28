@@ -232,11 +232,9 @@ module.exports = grammar({
 
     enum_body_elem: ($) =>
       choice(
-        seq($.id, "=", $.constant, optional($.deprecated)),
-        seq($.id, optional($.deprecated)),
+        seq($.id, "=", $.constant, optional($.attr)),
+        seq($.id, optional($.attr)),
       ),
-
-    deprecated: ($) => choice("&deprecated", seq("&deprecated", "=", "const")),
 
     func_params: ($) =>
       choice(seq("(", $.formal_args, ")", optional(seq(":", $.type)))),
