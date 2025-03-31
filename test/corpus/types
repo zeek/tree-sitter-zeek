@@ -49,3 +49,77 @@ Address
     (expr
       (constant
         (ipv6)))))
+
+================================================================================
+Enum with deprecated
+================================================================================
+
+type enum_with_deprecated_explicit: enum {
+    ZERO_EXPLICIT = 0,
+    ONE_EXPLICIT = 1 &deprecated,
+    TWO_EXPLICIT = 2 &deprecated="two is deprecated :(",
+    THREE_EXPLICIT = 3,
+};
+
+type enum_with_deprecated_implicit: enum {
+    ZERO_IMPLICIT,
+    ONE_IMPLICIT &deprecated,
+    TWO_IMPLICIT &deprecated="two is deprecated :(",
+    THREE_IMPLICIT,
+};
+--------------------------------------------------------------------------------
+
+(source_file
+  (nl)
+  (decl
+    (type_decl
+      (id)
+      (type
+        (nl)
+        (enum_body
+          (enum_body_elem
+            (id)
+            (constant
+              (integer)))
+          (nl)
+          (enum_body_elem
+            (id)
+            (constant
+              (integer))
+            (attr))
+          (nl)
+          (enum_body_elem
+            (id)
+            (constant
+              (integer))
+            (attr
+              (string)))
+          (nl)
+          (enum_body_elem
+            (id)
+            (constant
+              (integer))))
+        (nl))))
+  (nl)
+  (nl)
+  (decl
+    (type_decl
+      (id)
+      (type
+        (nl)
+        (enum_body
+          (enum_body_elem
+            (id))
+          (nl)
+          (enum_body_elem
+            (id)
+            (attr))
+          (nl)
+          (enum_body_elem
+            (id)
+            (attr
+              (string)))
+          (nl)
+          (enum_body_elem
+            (id)))
+        (nl)))))
