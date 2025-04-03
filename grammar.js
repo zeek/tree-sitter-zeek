@@ -362,9 +362,9 @@ module.exports = grammar({
 
     constant: ($) =>
       choice(
-        // Associativity here resolves ambiguity with division
-        prec_l(seq($.ipv4, optional(seq("/", /[0-9]+/)))),
-        prec_l(seq($.ipv6, optional(seq("/", /[0-9]+/)))),
+        $.ipv4,
+        $.ipv6,
+        $.subnet,
         $.hostname,
         "T",
         "F",
@@ -440,6 +440,9 @@ module.exports = grammar({
 
     ipv4: (_) => /([0-9]+\.*){4}/,
     ipv6: (_) => /\[([0-9a-fA-F]?:*)+(:+([0-9]+\.*){4})?\]/,
+
+    // Increase precedence to prefer matching over division.
+    subnet: ($) => prec(1000, seq(choice($.ipv4, $.ipv6), "/", $.integer)),
 
     port: ($) => /[0-9]+\/(tcp|udp|icmp|unknown)/,
 
