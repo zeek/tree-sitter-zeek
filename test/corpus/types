@@ -51,6 +51,59 @@ Address
         (ipv6)))))
 
 ================================================================================
+Subnet
+================================================================================
+
+1.2.3.4/19;
+[::127.0.0.1]/12;
+
+# Even with spaces this is never parsed as a division.
+1.2.3.4 / 19;
+1.2.3.4/ 19;
+1.2.3.4 /19;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (constant
+        (subnet
+          (ipv4)
+          (integer)))))
+  (nl)
+  (stmt
+    (expr
+      (constant
+        (subnet
+          (ipv6)
+          (integer)))))
+  (nl)
+  (nl)
+  (minor_comment)
+  (nl)
+  (stmt
+    (expr
+      (constant
+        (subnet
+          (ipv4)
+          (integer)))))
+  (nl)
+  (stmt
+    (expr
+      (constant
+        (subnet
+          (ipv4)
+          (integer)))))
+  (nl)
+  (stmt
+    (expr
+      (constant
+        (subnet
+          (ipv4)
+          (integer))))))
+
+================================================================================
 Enum with deprecated
 ================================================================================
 
