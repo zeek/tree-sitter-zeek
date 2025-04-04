@@ -265,6 +265,7 @@ module.exports = grammar({
           seq("&broker_store", "=", $.expr),
           seq("&create_expire", "=", $.expr),
           seq("&default", "=", $.expr),
+          seq("&default_insert", "=", $.expr),
           seq("&deprecated", "=", $.string),
           seq("&delete_func", "=", $.expr),
           seq("&expire_func", "=", $.expr),
