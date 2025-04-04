@@ -2322,6 +2322,23 @@
             "members": [
               {
                 "type": "STRING",
+                "value": "&default_insert"
+              },
+              {
+                "type": "STRING",
+                "value": "="
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              }
+            ]
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
                 "value": "&deprecated"
               },
               {
