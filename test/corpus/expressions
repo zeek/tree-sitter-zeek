@@ -143,3 +143,31 @@ print table[int] of vector of table[string] of count;
             (type
               (type)
               (type))))))))
+
+================================================================================
+Patterns
+================================================================================
+
+/abc/;
+/abc/s;
+/abc/si;
+/abc/is;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (pattern)))
+  (nl)
+  (stmt
+    (expr
+      (pattern)))
+  (nl)
+  (stmt
+    (expr
+      (pattern)))
+  (nl)
+  (stmt
+    (expr
+      (pattern))))
