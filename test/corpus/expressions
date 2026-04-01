@@ -171,3 +171,24 @@ Patterns
   (stmt
     (expr
       (pattern))))
+
+================================================================================
+Operations
+================================================================================
+
+total_secs / 3600 / 24;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (expr
+          (id))
+        (expr
+          (constant
+            (integer))))
+      (expr
+        (constant
+          (integer))))))

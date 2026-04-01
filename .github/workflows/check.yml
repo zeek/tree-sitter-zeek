@@ -9,14 +9,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: tree-sitter/setup-action/cli@v1
-      - uses: tree-sitter/parser-test-action@v2
+      - uses: actions/checkout@v6
+      - uses: tree-sitter/setup-action/cli@v2
+      - uses: tree-sitter/parser-test-action@v3
         with:
           generate: true
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
       - uses: pre-commit/action@v3.0.1
