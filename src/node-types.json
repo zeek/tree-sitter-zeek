@@ -1425,11 +1425,11 @@
   },
   {
     "type": "file",
-    "named": true
+    "named": false
   },
   {
     "type": "file",
-    "named": false
+    "named": true
   },
   {
     "type": "floatp",
@@ -1535,11 +1535,11 @@
   },
   {
     "type": "pattern",
-    "named": true
+    "named": false
   },
   {
     "type": "pattern",
-    "named": false
+    "named": true
   },
   {
     "type": "pop",
