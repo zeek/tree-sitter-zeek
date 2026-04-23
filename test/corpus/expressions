@@ -192,3 +192,43 @@ total_secs / 3600 / 24;
       (expr
         (constant
           (integer))))))
+
+================================================================================
+Record field
+================================================================================
+
+c$http$method || c$http$uri;
+c$http?$method || c$http?$uri;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (expr
+          (expr
+            (id))
+          (id))
+        (id))
+      (expr
+        (expr
+          (expr
+            (id))
+          (id))
+        (id))))
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (expr
+          (expr
+            (id))
+          (id))
+        (id))
+      (expr
+        (expr
+          (expr
+            (id))
+          (id))
+        (id)))))
