@@ -2566,6 +2566,27 @@
           }
         },
         {
+          "type": "PREC_LEFT",
+          "value": 9,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              },
+              {
+                "type": "STRING",
+                "value": "?$"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "id"
+              }
+            ]
+          }
+        },
+        {
           "type": "PREC_RIGHT",
           "value": 8,
           "content": {
@@ -3605,23 +3626,6 @@
               }
             ]
           }
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "expr"
-            },
-            {
-              "type": "STRING",
-              "value": "?$"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "id"
-            }
-          ]
         },
         {
           "type": "SEQ",
