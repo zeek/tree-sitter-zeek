@@ -285,6 +285,7 @@ module.exports = grammar({
         prec_l(9, seq($.expr, "[", $.expr_list, "]")),
         prec_l(9, seq($.expr, $.index_slice)),
         prec_l(9, seq($.expr, "$", $.id)),
+        prec_l(9, seq($.expr, "?$", $.id)),
 
         prec_r(8, seq("|", $.expr, "|")),
         prec_r(8, seq("++", $.expr)),
@@ -351,7 +352,6 @@ module.exports = grammar({
         seq("(", $.expr, ")"),
         seq("copy", "(", $.expr, ")"),
         prec_r(seq("hook", $.expr)),
-        seq($.expr, "?$", $.id),
         seq("schedule", $.expr, "{", $.event_hdr, "}"),
         seq("function", $.begin_lambda, $.func_body),
 
