@@ -260,6 +260,8 @@ module.exports = grammar({
           "&ordered",
           "&raw_output",
           "&redef",
+          "&no_ZAM_opt",
+          "&no_CPP_opt",
           seq("&add_func", "=", $.expr),
           seq("&backend", "=", $.expr),
           seq("&broker_store", "=", $.expr),
@@ -275,6 +277,7 @@ module.exports = grammar({
           seq("&read_expire", "=", $.expr),
           seq("&type_column", "=", $.expr),
           seq("&write_expire", "=", $.expr),
+          seq("&publish_on_change", "=", $.expr),
         ),
       ),
 

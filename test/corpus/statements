@@ -72,3 +72,35 @@ redef record Conn::Info$ip_proto += { &log };
       (attr_list
         (attr))))
   (nl))
+
+================================================================================
+Publish on change
+================================================================================
+
+global endpoints: set[addr, addr] &publish_on_change=[$one="hi", $two="there"];
+
+---
+
+(source_file
+  (nl)
+  (decl
+    (global_decl
+      (id)
+      (type
+        (type)
+        (type))
+      (attr_list
+        (attr
+          (expr
+            (expr_list
+              (expr
+                (id)
+                (expr
+                  (constant
+                    (string))))
+              (expr
+                (id)
+                (expr
+                  (constant
+                    (string))))))))))
+  (nl))
