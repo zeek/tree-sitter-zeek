@@ -89,3 +89,25 @@ event run_sync_hook() {
               (pragma))))
         (nl))))
   (nl))
+
+================================================================================
+Deprecated
+================================================================================
+
+@deprecated "Quoted like a good user"
+@deprecated no quotes here!
+@deprecated this one ends in a semicolon, haha;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (nl)
+  (decl
+    (preproc_directive))
+  (nl)
+  (decl
+    (preproc_directive))
+  (nl)
+  (decl
+    (preproc_directive))
+  (nl))

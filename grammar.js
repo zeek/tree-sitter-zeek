@@ -419,7 +419,7 @@ module.exports = grammar({
     // The "preprocessor" directives. We include more than conditionals here.
     preproc_directive: ($) =>
       choice(
-        seq("@deprecated", optional("("), $.string, optional(")")),
+        seq("@deprecated", /[^\r\n]*/),
         seq("@load", $.file),
         seq("@load-sigs", $.file),
         seq("@load-plugin", $.id),
