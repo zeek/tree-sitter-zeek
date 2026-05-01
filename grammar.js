@@ -434,8 +434,13 @@ module.exports = grammar({
       ),
 
     pragma: () =>
-      seq(token("@pragma"), choice("push", "pop"), /[A-Za-z0-9][A-Za-z0-9\-]*/),
-
+      seq(
+        token("@pragma"),
+        choice(
+          seq("push", /[A-Za-z0-9][A-Za-z0-9\-]*/),
+          seq("pop", optional(/[A-Za-z0-9][A-Za-z0-9\-]*/)),
+        ),
+      ),
     // These directives return strings.
     string_directive: ($) => choice("@DIR", "@FILENAME"),
 
