@@ -233,9 +233,6 @@ module.exports = grammar({
     enum_body_elem: ($) =>
       seq($.id, optional(seq("=", $.constant)), optional($.attr)),
 
-    func_params: ($) =>
-      choice(seq("(", $.formal_args, ")", optional(seq(":", $.type)))),
-
     formal_args: ($) => list1($.formal_arg, choice(";", ","), false),
     formal_arg: ($) => seq($.id, ":", $.type, optional($.attr_list)),
 
