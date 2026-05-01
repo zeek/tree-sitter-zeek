@@ -760,10 +760,6 @@
         {
           "type": "pragma",
           "named": true
-        },
-        {
-          "type": "string",
-          "named": true
         }
       ]
     }
@@ -1152,6 +1148,14 @@
     "named": false
   },
   {
+    "type": "&no_CPP_opt",
+    "named": false
+  },
+  {
+    "type": "&no_ZAM_opt",
+    "named": false
+  },
+  {
     "type": "&on_change",
     "named": false
   },
@@ -1165,6 +1169,10 @@
   },
   {
     "type": "&priority",
+    "named": false
+  },
+  {
+    "type": "&publish_on_change",
     "named": false
   },
   {
@@ -1244,6 +1252,10 @@
     "named": false
   },
   {
+    "type": "<<",
+    "named": false
+  },
+  {
     "type": "<=",
     "named": false
   },
@@ -1261,6 +1273,10 @@
   },
   {
     "type": ">=",
+    "named": false
+  },
+  {
+    "type": ">>",
     "named": false
   },
   {
