@@ -152,6 +152,8 @@ Patterns
 /abc/s;
 /abc/si;
 /abc/is;
+[/\\/, /\\/]; # The list may fail to parse later elements even if first parses ok
+[/\\\\/, /\\\\/];
 ---
 
 (source_file
@@ -170,7 +172,24 @@ Patterns
   (nl)
   (stmt
     (expr
-      (pattern))))
+      (pattern)))
+  (nl)
+  (stmt
+    (expr
+      (expr_list
+        (expr
+          (pattern))
+        (expr
+          (pattern)))))
+  (minor_comment)
+  (nl)
+  (stmt
+    (expr
+      (expr_list
+        (expr
+          (pattern))
+        (expr
+          (pattern))))))
 
 ================================================================================
 Operations
