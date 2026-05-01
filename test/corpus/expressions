@@ -232,3 +232,33 @@ c$http?$method || c$http?$uri;
             (id))
           (id))
         (id)))))
+
+================================================================================
+Bitshifts
+================================================================================
+
+a << b;
+100 << 2 + 2;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (id))
+      (expr
+        (id))))
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (constant
+          (integer)))
+      (expr
+        (expr
+          (constant
+            (integer)))
+        (expr
+          (constant
+            (integer)))))))
