@@ -233,9 +233,6 @@ module.exports = grammar({
     enum_body_elem: ($) =>
       seq($.id, optional(seq("=", $.constant)), optional($.attr)),
 
-    func_params: ($) =>
-      choice(seq("(", $.formal_args, ")", optional(seq(":", $.type)))),
-
     formal_args: ($) => list1($.formal_arg, choice(";", ","), false),
     formal_arg: ($) => seq($.id, ":", $.type, optional($.attr_list)),
 
@@ -260,6 +257,8 @@ module.exports = grammar({
           "&ordered",
           "&raw_output",
           "&redef",
+          "&no_ZAM_opt",
+          "&no_CPP_opt",
           seq("&add_func", "=", $.expr),
           seq("&backend", "=", $.expr),
           seq("&broker_store", "=", $.expr),
@@ -275,52 +274,60 @@ module.exports = grammar({
           seq("&read_expire", "=", $.expr),
           seq("&type_column", "=", $.expr),
           seq("&write_expire", "=", $.expr),
+          seq("&publish_on_change", "=", $.expr),
         ),
       ),
 
-    // Compare to C precedence table at
-    // https://en.cppreference.com/w/c/language/operator_precedence
+    // Precedence directly from Zeek's parser
     expr: ($) =>
       choice(
-        prec_l(9, seq($.expr, "[", $.expr_list, "]")),
-        prec_l(9, seq($.expr, $.index_slice)),
-        prec_l(9, seq($.expr, "$", $.id)),
-        prec_l(9, seq($.expr, "?$", $.id)),
+        prec_l(19, seq($.expr, "as", $.type)),
+        prec_l(19, seq($.expr, "is", $.type)),
 
-        prec_r(8, seq("|", $.expr, "|")),
-        prec_r(8, seq("++", $.expr)),
-        prec_r(8, seq("--", $.expr)),
-        prec_r(8, seq("!", $.expr)),
-        prec_r(8, seq("~", $.expr)),
-        prec_r(8, seq("-", $.expr)),
-        prec_r(8, seq("+", $.expr)),
-        prec_l(8, seq($.expr, "as", $.type)),
-        prec_l(8, seq($.expr, "is", $.type)),
+        prec_l(18, seq($.expr, $.index_slice)),
+        prec_r(18, seq("|", $.expr, "|")),
+        prec_l(18, seq($.expr, "[", $.expr_list, "]")),
+        prec_l(18, seq($.expr, "$", $.id)),
+        prec_l(18, seq($.expr, "?$", $.id)),
 
-        prec_l(7, seq($.expr, "*", $.expr)),
-        prec_l(7, seq($.expr, "/", $.expr)),
-        prec_l(7, seq($.expr, "%", $.expr)),
+        prec_r(17, seq("!", $.expr)),
+        prec_r(17, seq("~", $.expr)),
+        prec_r(17, seq("-", $.expr)),
+        prec_r(17, seq("+", $.expr)),
 
-        prec_l(6, seq($.expr, "+", $.expr)),
-        prec_l(6, seq($.expr, "-", $.expr)),
+        prec_l(16, seq("++", $.expr)),
+        prec_l(16, seq("--", $.expr)),
 
-        prec_l(6, seq($.expr, "<", $.expr)),
-        prec_l(6, seq($.expr, "<=", $.expr)),
-        prec_l(6, seq($.expr, ">", $.expr)),
-        prec_l(6, seq($.expr, ">=", $.expr)),
+        prec_l(15, seq($.expr, "*", $.expr)),
+        prec_l(15, seq($.expr, "/", $.expr)),
+        prec_l(15, seq($.expr, "%", $.expr)),
 
-        prec_l(6, seq($.expr, "&", $.expr)),
-        prec_l(6, seq($.expr, "^", $.expr)),
-        prec_l(6, seq($.expr, "|", $.expr)),
-        prec_r(6, seq($.expr, "?", $.expr, ":", $.expr)),
-        prec_l(6, seq($.expr, "in", $.expr)),
-        prec_l(6, seq($.expr, "!", "in", $.expr)),
+        prec_l(14, seq($.expr, "+", $.expr)),
+        prec_l(14, seq($.expr, "-", $.expr)),
 
-        prec_l(5, seq($.expr, "==", $.expr)),
-        prec_l(5, seq($.expr, "!=", $.expr)),
+        prec_l(13, seq($.expr, "<<", $.expr)),
+        prec_l(13, seq($.expr, ">>", $.expr)),
 
-        prec_l(4, seq($.expr, "&&", $.expr)),
-        prec_l(4, seq($.expr, "||", $.expr)),
+        prec_l(12, seq($.expr, "&", $.expr)),
+        prec_l(11, seq($.expr, "^", $.expr)),
+        prec_l(10, seq($.expr, "|", $.expr)),
+
+        prec_l(9, seq($.expr, "in", $.expr)),
+        prec_l(9, seq($.expr, "!", "in", $.expr)),
+
+        prec_l(8, seq($.expr, "<", $.expr)),
+        prec_l(8, seq($.expr, "<=", $.expr)),
+        prec_l(8, seq($.expr, ">", $.expr)),
+        prec_l(8, seq($.expr, ">=", $.expr)),
+        prec_l(8, seq($.expr, "==", $.expr)),
+        prec_l(8, seq($.expr, "!=", $.expr)),
+
+        prec_r(7, seq("hook", $.expr)),
+
+        prec_l(6, seq($.expr, "&&", $.expr)),
+        prec_l(5, seq($.expr, "||", $.expr)),
+
+        prec_r(4, seq($.expr, "?", $.expr, ":", $.expr)),
 
         prec_r(3, seq($.expr, "=", $.expr)),
         prec_r(3, seq($.expr, "-=", $.expr)),
@@ -351,7 +358,6 @@ module.exports = grammar({
 
         seq("(", $.expr, ")"),
         seq("copy", "(", $.expr, ")"),
-        prec_r(seq("hook", $.expr)),
         seq("schedule", $.expr, "{", $.event_hdr, "}"),
         seq("function", $.begin_lambda, $.func_body),
 
@@ -413,7 +419,7 @@ module.exports = grammar({
     // The "preprocessor" directives. We include more than conditionals here.
     preproc_directive: ($) =>
       choice(
-        seq("@deprecated", optional("("), $.string, optional(")")),
+        seq("@deprecated", /[^\r\n]*/),
         seq("@load", $.file),
         seq("@load-sigs", $.file),
         seq("@load-plugin", $.id),
@@ -428,8 +434,13 @@ module.exports = grammar({
       ),
 
     pragma: () =>
-      seq(token("@pragma"), choice("push", "pop"), /[A-Za-z0-9][A-Za-z0-9\-]*/),
-
+      seq(
+        token("@pragma"),
+        choice(
+          seq("push", /[A-Za-z0-9][A-Za-z0-9\-]*/),
+          seq("pop", optional(/[A-Za-z0-9][A-Za-z0-9\-]*/)),
+        ),
+      ),
     // These directives return strings.
     string_directive: ($) => choice("@DIR", "@FILENAME"),
 
@@ -437,7 +448,7 @@ module.exports = grammar({
 
     id: () => /(::)?([A-Za-z_][A-Za-z_0-9]*)(::[A-Za-z_][A-Za-z_0-9]*)*/,
     file: ($) => /[^ \t\r\n]+/,
-    pattern: ($) => /\/((\\\/)?[^\r\n\/]?)*\/[si]*/,
+    pattern: ($) => /\/(\\.|[^\/\\\r\n])*\/[si]*/,
 
     ipv4: (_) =>
       token(

@@ -20,7 +20,7 @@ similars.
 
 To use the generated parser directly (e.g. via any of tree-sitter's
 [language bindings](https://tree-sitter.github.io/tree-sitter/#language-bindings)),
-clone this repository recursively. Generated sources are tracked in the
+clone this repository. Generated sources are tracked in the
 [`src`](src/) directory. You do not need the tree-sitter CLI to use those
 sources in your tooling, but you'll likely want it anyway to explore the parser.
 For example, `tree-sitter parse <script>` produces the script's syntax tree, and
@@ -33,10 +33,12 @@ For example, `tree-sitter parse <script>` produces the script's syntax tree, and
 
 ## Testing
 
-There's currently no `tree-sitter test` testsuite. Instead, a test driver runs
-the parser on every Zeek script in the Zeek distribution, reporting any
-errors. For CI, a Github Action workflow additionally clones the Zeek tree prior
-to running this test, to ensure that those Zeek scripts are available.
+You can find the tests in [`test`](test/). This contains a separater [`corpus`](test/corpus/)
+directory for tests with `tree-sitter test`. You can update the baselines with
+`tree-sitter test -u`.
+
+There is also a script called `parse-zeek-tree.sh` which runs the parser on every Zeek script
+in the Zeek distribution, reporting any errors.
 
 ## Releasing a new version
 
