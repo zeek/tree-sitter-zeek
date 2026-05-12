@@ -289,6 +289,7 @@ module.exports = grammar({
         prec_l(18, seq($.expr, "[", $.expr_list, "]")),
         prec_l(18, seq($.expr, "$", $.id)),
         prec_l(18, seq($.expr, "?$", $.id)),
+        prec_l(18, seq($.expr, "?as", $.type)),
 
         prec_r(17, seq("!", $.expr)),
         prec_r(17, seq("~", $.expr)),
