@@ -1288,6 +1288,10 @@
     "named": false
   },
   {
+    "type": "?as",
+    "named": false
+  },
+  {
     "type": "@DIR",
     "named": false
   },

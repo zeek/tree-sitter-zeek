@@ -281,3 +281,27 @@ a << b;
         (expr
           (constant
             (integer)))))))
+
+================================================================================
+as and ?as
+================================================================================
+
+5 as count;
+5 ?as count;
+---
+
+(source_file
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (constant
+          (integer)))
+      (type)))
+  (nl)
+  (stmt
+    (expr
+      (expr
+        (constant
+          (integer)))
+      (type))))
