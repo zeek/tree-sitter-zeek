@@ -1,4 +1,4 @@
-module github.com/tree-sitter/tree-sitter-zeek
+module github.com/zeek/tree-sitter-zeek
 
 go 1.23
 
